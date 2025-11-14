@@ -12,6 +12,8 @@ import {
   Map,
   Sparkle,
   Biohazard,
+  Ruler,
+  Weight,
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
@@ -30,6 +32,7 @@ import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 
 
 const navItems = [
@@ -80,23 +83,54 @@ const AddEventForm = ({
     const [description, setDescription] = useState('');
     const [type, setType] = useState<EventType>(defaultEventType || 'Other');
     const [open, setOpen] = useState(false);
+    
+    // New state for conditional Doctor Visit fields
+    const [visitType, setVisitType] = useState<'Casual Visit' | 'Serious Visit' | undefined>();
+    const [diseaseName, setDiseaseName] = useState('');
+    const [medicationsPrescribed, setMedicationsPrescribed] = useState('');
 
     useEffect(() => {
         if (defaultEventType) {
             setType(defaultEventType);
         }
     }, [defaultEventType]);
+    
+    // Reset conditional fields when type changes
+    useEffect(() => {
+        if (type !== 'Doctor Visit') {
+            setVisitType(undefined);
+            setDiseaseName('');
+            setMedicationsPrescribed('');
+        }
+    }, [type]);
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!title || !date || !type || !age) return;
-        onAddEvent({ title, date, description, type, age: parseInt(age) });
+    const resetForm = () => {
         setTitle('');
         setDate('');
         setAge('');
         setDescription('');
         setType(defaultEventType || 'Other');
+        setVisitType(undefined);
+        setDiseaseName('');
+        setMedicationsPrescribed('');
         setOpen(false);
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!title || !date || !type || !age) return;
+        
+        let eventDetails: TimelineEvent['details'] = {};
+        if (type === 'Doctor Visit') {
+            eventDetails = {
+                visitType: visitType,
+                diseaseName: visitType === 'Serious Visit' ? diseaseName : undefined,
+                medicationsPrescribed: visitType === 'Serious Visit' ? medicationsPrescribed : undefined,
+            };
+        }
+
+        onAddEvent({ title, date, description, type, age: parseInt(age), details: eventDetails });
+        resetForm();
     };
 
     return (
@@ -104,7 +138,7 @@ const AddEventForm = ({
             <DialogTrigger asChild>
                 {children}
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
                     <DialogTitle>Add New Timeline Event</DialogTitle>
                 </DialogHeader>
@@ -136,6 +170,37 @@ const AddEventForm = ({
                             </SelectContent>
                         </Select>
                     </div>
+
+                    {type === 'Doctor Visit' && (
+                        <div className="space-y-4 pt-2 border-t">
+                            <div className="space-y-2">
+                                <Label>Visit Type</Label>
+                                <RadioGroup value={visitType} onValueChange={(v) => setVisitType(v as 'Casual Visit' | 'Serious Visit')} className="flex gap-4">
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="Casual Visit" id="casual" />
+                                        <Label htmlFor="casual">Casual Visit</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="Serious Visit" id="serious" />
+                                        <Label htmlFor="serious">Serious Visit</Label>
+                                    </div>
+                                </RadioGroup>
+                            </div>
+                             {visitType === 'Serious Visit' && (
+                                <div className="space-y-4 pl-2">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="diseaseName">Disease Name</Label>
+                                        <Input id="diseaseName" value={diseaseName} onChange={(e) => setDiseaseName(e.target.value)} placeholder="e.g., Influenza" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="medicationsPrescribed">Medications Prescribed</Label>
+                                        <Input id="medicationsPrescribed" value={medicationsPrescribed} onChange={(e) => setMedicationsPrescribed(e.target.value)} placeholder="e.g., Tamiflu" />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                    
                     <div className="space-y-2">
                         <Label htmlFor="description">Description / Notes</Label>
                         <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} />
@@ -160,11 +225,22 @@ function DoctorVisits({ events, onAddEvent }: { events: TimelineEvent[], onAddEv
             {visits.map(visit => (
                 <Card key={visit.id}>
                     <CardHeader>
-                        <CardTitle>{visit.title}</CardTitle>
-                        <CardDescription>{new Date(visit.date).toLocaleDateString()} (Age {visit.age})</CardDescription>
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <CardTitle>{visit.title}</CardTitle>
+                                <CardDescription>{new Date(visit.date).toLocaleDateString()} (Age {visit.age})</CardDescription>
+                            </div>
+                             {visit.details?.visitType && <Badge variant="outline">{visit.details.visitType}</Badge>}
+                        </div>
                     </CardHeader>
                     <CardContent>
                         <p className="text-sm">{visit.description}</p>
+                        {visit.details?.visitType === 'Serious Visit' && (
+                            <div className="mt-4 space-y-2 text-sm border-t pt-4">
+                                {visit.details.diseaseName && <p><span className="font-semibold">Diagnosis:</span> {visit.details.diseaseName}</p>}
+                                {visit.details.medicationsPrescribed && <p><span className="font-semibold">Prescription:</span> {visit.details.medicationsPrescribed}</p>}
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             ))}
@@ -275,6 +351,10 @@ function History() {
 function AccountSection() {
     const { toast } = useToast();
     const [userId, setUserId] = React.useState('');
+    const [name, setName] = React.useState('John Doe');
+    const [age, setAge] = React.useState('34');
+    const [height, setHeight] = React.useState("6'0\"");
+    const [weight, setWeight] = React.useState("175 lbs");
 
     React.useEffect(() => {
       let id = localStorage.getItem('healthsync-userId');
@@ -283,11 +363,29 @@ function AccountSection() {
         localStorage.setItem('healthsync-userId', id);
       }
       setUserId(id);
+      
+      const storedName = localStorage.getItem('healthsync-name');
+      if (storedName) setName(storedName);
+      const storedAge = localStorage.getItem('healthsync-age');
+      if (storedAge) setAge(storedAge);
+      const storedHeight = localStorage.getItem('healthsync-height');
+      if (storedHeight) setHeight(storedHeight);
+      const storedWeight = localStorage.getItem('healthsync-weight');
+      if (storedWeight) setWeight(storedWeight);
+
     }, []);
+
+    const handleSave = () => {
+        localStorage.setItem('healthsync-name', name);
+        localStorage.setItem('healthsync-age', age);
+        localStorage.setItem('healthsync-height', height);
+        localStorage.setItem('healthsync-weight', weight);
+        toast({ title: "Account Updated", description: "Your details have been saved." });
+    }
 
     const handleDelete = () => {
       localStorage.clear();
-      toast({ variant: "destructive", title: "Account Deleted", description: "Your account has been permanently deleted."});
+      toast({ variant: "destructive", title: "All Data Deleted", description: "All your data has been permanently deleted."});
       setTimeout(() => window.location.reload(), 1000);
     }
 
@@ -298,16 +396,31 @@ function AccountSection() {
                     <CardTitle>Account Information</CardTitle>
                     <CardDescription>Manage your account settings and actions. All your data is stored locally in this browser.</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="space-y-1">
-                        <p className="text-sm font-medium text-muted-foreground">User ID</p>
+                <CardContent className="space-y-6">
+                    <div className="space-y-2">
+                        <Label>User ID</Label>
                         <p className="font-mono text-sm bg-muted p-2 rounded-md break-all">{userId}</p>
                     </div>
-                     <div className="space-y-2">
-                        <p className="font-semibold">Name: John Doe</p>
-                        <p className="font-semibold">Age: 34</p>
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                         <div className="space-y-2">
+                            <Label htmlFor="name">Name</Label>
+                            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="age">Age</Label>
+                            <Input id="age" type="number" value={age} onChange={(e) => setAge(e.target.value)} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="height">Height</Label>
+                            <Input id="height" value={height} onChange={(e) => setHeight(e.target.value)} placeholder="e.g., 6'0&quot;" />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="weight">Weight</Label>
+                            <Input id="weight" value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="e.g., 175 lbs"/>
+                        </div>
                     </div>
-                    <div className="flex flex-col sm:flex-row gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                        <Button onClick={handleSave}>Save Changes</Button>
                         <AlertDialog>
                             <AlertDialogTrigger asChild>
                                 <Button variant="destructive">Delete All Data & Reset</Button>

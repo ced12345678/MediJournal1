@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { Syringe, Pill, Stethoscope, HeartPulse, PlusCircle, Ruler, Weight, Biohazard } from 'lucide-react';
+import { Syringe, Pill, Stethoscope, HeartPulse, PlusCircle, Biohazard, HelpCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from './ui/dialog';
 import { Input } from './ui/input';
@@ -10,13 +10,13 @@ import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
+import { Badge } from './ui/badge';
 
 export const eventIcons = {
   Vaccination: Syringe,
   Medication: Pill,
   'Doctor Visit': Stethoscope,
   Disease: Biohazard,
-  Measurement: Ruler,
   Other: HeartPulse
 };
 
@@ -31,9 +31,10 @@ export type TimelineEvent = {
   description: string;
   type: EventType;
   details?: {
-    height?: string;
-    weight?: string;
     status?: 'Active' | 'Stopped';
+    visitType?: 'Casual Visit' | 'Serious Visit';
+    diseaseName?: string;
+    medicationsPrescribed?: string;
   }
 };
 
@@ -42,7 +43,6 @@ export const initialEvents: TimelineEvent[] = [
         id: '1', age: 0, date: '1999-05-20', title: 'Born',
         description: 'Born at City General Hospital.',
         type: 'Other',
-        details: { height: "20 inches", weight: "7 lbs 8 oz" }
     },
     {
         id: '2', age: 1, date: '2000-07-15', title: 'DTaP & Polio Vaccine',
@@ -58,6 +58,7 @@ export const initialEvents: TimelineEvent[] = [
         id: '4', age: 6, date: '2005-09-10', title: 'Broken Arm',
         description: 'Fell from monkey bars, resulting in a fractured left radius. Cast for 6 weeks.',
         type: 'Doctor Visit',
+        details: { visitType: 'Serious Visit', diseaseName: 'Fractured Radius' }
     },
      {
         id: '12', age: 7, date: '2006-11-01', title: 'Chickenpox',
@@ -72,8 +73,8 @@ export const initialEvents: TimelineEvent[] = [
     {
         id: '6', age: 16, date: '2015-05-30', title: 'Annual Physical',
         description: 'Sports physical for high school soccer. All clear.',
-        type: 'Measurement',
-        details: { height: "5'10\"", weight: "155 lbs" }
+        type: 'Doctor Visit',
+        details: { visitType: 'Casual Visit' }
     },
     {
         id: '7', age: 18, date: '2017-12-22', title: 'Wisdom Teeth Extraction',
@@ -95,17 +96,18 @@ export const initialEvents: TimelineEvent[] = [
         id: '10', age: 24, date: '2023-11-02', title: 'Sprained Ankle',
         description: 'Sprained right ankle playing basketball. Advised RICE protocol.',
         type: 'Doctor Visit',
+        details: { visitType: 'Serious Visit', diseaseName: 'Ankle Sprain' }
     },
     {
         id: '11', age: 25, date: '2024-06-10', title: 'Annual Check-up',
         description: 'Routine physical. All vitals normal. Blood work looks good.',
         type: 'Doctor Visit',
-        details: { height: "6'0\"", weight: "175 lbs" }
+        details: { visitType: 'Casual Visit' }
     },
 ];
 
 const TimelineItem = ({ event, isLast }: { event: TimelineEvent; isLast: boolean }) => {
-  const Icon = eventIcons[event.type] || HeartPulse;
+  const Icon = eventIcons[event.type] || HelpCircle;
   return (
     <div className="relative pl-12 py-3 group">
       {!isLast && <div className="absolute left-5 top-0 h-full w-0.5 bg-border -translate-x-1/2" />}
@@ -117,19 +119,24 @@ const TimelineItem = ({ event, isLast }: { event: TimelineEvent; isLast: boolean
       </div>
       
       <div className="ml-4">
-        <p className="font-semibold text-md">{event.title}</p>
+        <div className="flex items-center gap-2">
+            <p className="font-semibold text-md">{event.title}</p>
+            {event.details?.visitType && <Badge variant="outline">{event.details.visitType}</Badge>}
+        </div>
         <p className="text-sm text-muted-foreground">{new Date(event.date).toLocaleDateString()}</p>
         <p className="text-sm text-foreground/80 mt-1">{event.description}</p>
+        
+        {event.type === 'Doctor Visit' && event.details?.visitType === 'Serious Visit' && (
+             <div className="mt-2 text-sm space-y-1">
+                {event.details.diseaseName && <p><span className="font-semibold">Diagnosis:</span> {event.details.diseaseName}</p>}
+                {event.details.medicationsPrescribed && <p><span className="font-semibold">Prescription:</span> {event.details.medicationsPrescribed}</p>}
+            </div>
+        )}
+        
         <div className="flex items-center gap-2 mt-1">
              <div className="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full">{event.type}</div>
-             {event.details?.status && <div className="text-xs font-medium bg-muted px-2 py-0.5 rounded-full">{event.details.status}</div>}
+             {event.details?.status && <Badge variant={event.details?.status === 'Active' ? 'default' : 'secondary'} className={event.details?.status === 'Active' ? 'bg-green-600' : ''}>{event.details.status}</Badge>}
         </div>
-        {event.details && (
-             <div className="flex gap-4 pt-2 mt-2">
-                {event.details.height && <div className="flex items-center gap-2 text-sm"><Ruler className="w-4 h-4 text-muted-foreground" /> <span>{event.details.height}</span></div>}
-                {event.details.weight && <div className="flex items-center gap-2 text-sm"><Weight className="w-4 h-4 text-muted-foreground" /> <span>{event.details.weight}</span></div>}
-             </div>
-        )}
       </div>
     </div>
   );
@@ -244,7 +251,7 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                 </CardHeader>
                 <CardContent>
                     {sortedAges.length > 0 ? (
-                        <Accordion type="single" collapsible className="w-full">
+                        <Accordion type="single" collapsible className="w-full" defaultValue={`age-${sortedAges[0]}`}>
                             {sortedAges.map(age => {
                                 const ageEvents = eventsByAge[age];
                                 if (!ageEvents || ageEvents.length === 0) {
