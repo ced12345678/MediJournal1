@@ -308,11 +308,92 @@ function Diseases({ events, onAddEvent }: { events: TimelineEvent[], onAddEvent:
     );
 }
 
+type TravelRecord = {
+    id: string;
+    location: string;
+    year: string;
+    notes: string;
+}
+
+const AddTravelRecordForm = ({ onAdd }: { onAdd: (record: Omit<TravelRecord, 'id'>) => void }) => {
+    const [location, setLocation] = useState('');
+    const [year, setYear] = useState('');
+    const [notes, setNotes] = useState('');
+    const [open, setOpen] = useState(false);
+    
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!location || !year) return;
+        onAdd({ location, year, notes });
+        setLocation('');
+        setYear('');
+        setNotes('');
+        setOpen(false);
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button>Add Travel Record</Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Add Travel Record</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="location">Location</Label>
+                            <Input id="location" value={location} onChange={(e) => setLocation(e.target.value)} required />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="year">Year</Label>
+                            <Input id="year" type="number" value={year} onChange={(e) => setYear(e.target.value)} required />
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="notes">Notes</Label>
+                        <Textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} />
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild><Button variant="ghost">Cancel</Button></DialogClose>
+                        <Button type="submit">Add Record</Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
+    )
+}
+
 function History() {
-    const places = [
-        {id: 1, location: 'Mexico', year: 2022, notes: 'Vacation, no health issues.'},
-        {id: 2, location: 'India', year: 2019, notes: 'Work trip, received Typhoid vaccine before travel.'}
+    const initialPlaces: TravelRecord[] = [
+        {id: '1', location: 'Mexico', year: '2022', notes: 'Vacation, no health issues.'},
+        {id: '2', location: 'India', year: '2019', notes: 'Work trip, received Typhoid vaccine before travel.'}
     ]
+    const [places, setPlaces] = useState<TravelRecord[]>([]);
+
+    useEffect(() => {
+        try {
+            const storedPlaces = localStorage.getItem('healthsync-travelHistory');
+            if (storedPlaces) {
+                setPlaces(JSON.parse(storedPlaces));
+            } else {
+                setPlaces(initialPlaces);
+                localStorage.setItem('healthsync-travelHistory', JSON.stringify(initialPlaces));
+            }
+        } catch (error) {
+            console.error("Failed to parse travel history from localStorage", error);
+            setPlaces(initialPlaces);
+        }
+    }, [])
+
+    const addTravelRecord = (record: Omit<TravelRecord, 'id'>) => {
+        const newRecord = { ...record, id: self.crypto.randomUUID() };
+        const updatedPlaces = [...places, newRecord];
+        setPlaces(updatedPlaces);
+        localStorage.setItem('healthsync-travelHistory', JSON.stringify(updatedPlaces));
+    }
+
     return (
         <div className="p-4 md:p-6">
             <Tabs defaultValue="family">
@@ -336,7 +417,7 @@ function History() {
                                 </div>
                             ))}
                             <div className="flex justify-end pt-4">
-                                <Button>Add Travel Record</Button>
+                                <AddTravelRecordForm onAdd={addTravelRecord} />
                             </div>
                         </CardContent>
                     </Card>
