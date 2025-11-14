@@ -1,22 +1,32 @@
 'use server';
 
 import { z } from 'zod';
-import { analyzeFamilyHistoryForRiskFactors } from '@/ai/flows/analyze-family-history-for-risk-factors';
-import type { AnalyzeFamilyHistoryOutput } from '@/ai/flows/analyze-family-history-for-risk-factors';
+import { analyzeFamilyHistoryForRiskFactors, familyHistoryChat } from '@/ai/flows/analyze-family-history-for-risk-factors';
+import type { AnalyzeFamilyHistoryOutput, FamilyHistoryChatOutput } from '@/ai/flows/analyze-family-history-for-risk-factors';
 
-const formSchema = z.object({
+const analysisSchema = z.object({
   familyHistory: z.string().min(50),
 });
 
-type FormState = {
+const chatSchema = z.object({
+  history: z.string(),
+  question: z.string().min(1),
+});
+
+type AnalysisFormState = {
   data: AnalyzeFamilyHistoryOutput | null;
   error: string | null;
 };
 
-export async function familyHistoryAnalysisAction(
-  values: z.infer<typeof formSchema>
-): Promise<FormState> {
-  const validatedFields = formSchema.safeParse(values);
+type ChatFormState = {
+    data: FamilyHistoryChatOutput | null;
+    error: string | null;
+}
+
+export async function analyzeFamilyHistoryAction(
+  values: z.infer<typeof analysisSchema>
+): Promise<AnalysisFormState> {
+  const validatedFields = analysisSchema.safeParse(values);
 
   if (!validatedFields.success) {
     return {
@@ -38,3 +48,32 @@ export async function familyHistoryAnalysisAction(
     };
   }
 }
+
+export async function familyHistoryChatAction(
+    values: z.infer<typeof chatSchema>
+): Promise<ChatFormState> {
+    const validatedFields = chatSchema.safeParse(values);
+
+    if (!validatedFields.success) {
+        return {
+            data: null,
+            error: 'Invalid input. Please type a message.'
+        }
+    }
+
+    try {
+        const result = await familyHistoryChat({
+            history: validatedFields.data.history,
+            question: validatedFields.data.question
+        });
+        return { data: result, error: null };
+    } catch (error) {
+        console.error('Error during AI chat:', error);
+        return {
+            data: null,
+            error: 'An unexpected error occurred in the chat. Please try again.'
+        }
+    }
+}
+
+    

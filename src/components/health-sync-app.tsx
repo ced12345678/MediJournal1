@@ -13,7 +13,6 @@ import {
   Stethoscope,
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ThemeToggle } from './theme-toggle';
@@ -37,25 +36,49 @@ type NavItem = typeof navItems[number];
 
 function PlaceholderContent({ title }: { title: string }) {
   return (
-    <div className="flex flex-1 items-center justify-center rounded-lg bg-card border border-dashed shadow-sm">
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h3 className="text-2xl font-bold tracking-tight">{title}</h3>
-        <p className="text-sm text-muted-foreground">Content for this section is coming soon.</p>
-      </div>
+    <div className="p-4 md:p-6">
+       <Card>
+        <CardHeader>
+          <CardTitle>{title}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm py-12">
+            <div className="flex flex-col items-center gap-2 text-center">
+              <h3 className="text-2xl font-bold tracking-tight">Coming Soon</h3>
+              <p className="text-sm text-muted-foreground">Content for this section is being developed.</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
 
 function AccountSection() {
     const { toast } = useToast();
-    const userId = "user_21c1fdef-3456-7890-abcd-ef1234567890";
+    const [userId, setUserId] = React.useState('');
+
+    React.useEffect(() => {
+      let id = localStorage.getItem('healthsync-userId');
+      if (!id) {
+        id = `user_${self.crypto.randomUUID()}`;
+        localStorage.setItem('healthsync-userId', id);
+      }
+      setUserId(id);
+    }, []);
+
+    const handleDelete = () => {
+      localStorage.clear();
+      toast({ variant: "destructive", title: "Account Deleted", description: "Your account has been permanently deleted."});
+      setTimeout(() => window.location.reload(), 1000);
+    }
 
     return (
         <div className="p-4 md:p-6">
             <Card>
                 <CardHeader>
                     <CardTitle>Account Information</CardTitle>
-                    <CardDescription>Manage your account settings and actions.</CardDescription>
+                    <CardDescription>Manage your account settings and actions. All your data is stored locally in this browser.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="space-y-1">
@@ -65,38 +88,19 @@ function AccountSection() {
                     <div className="flex flex-col sm:flex-row gap-2">
                         <AlertDialog>
                             <AlertDialogTrigger asChild>
-                                <Button variant="outline">Sign Out</Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                                <AlertDialogHeader>
-                                    <AlertDialogTitle>Are you sure you want to sign out?</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        You will be returned to the login page.
-                                    </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction onClick={() => toast({ title: "Signed Out", description: "You have been successfully signed out."})}>
-                                        Sign Out
-                                    </AlertDialogAction>
-                                </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
-                        <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                                <Button variant="destructive">Delete Account</Button>
+                                <Button variant="destructive">Delete All Data & Reset</Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                                 <AlertDialogHeader>
                                     <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                                     <AlertDialogDescription>
-                                        This action cannot be undone. This will permanently delete your account and remove your data from our servers.
+                                        This action cannot be undone. This will permanently delete all your data from this browser and reset the application.
                                     </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
                                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction onClick={() => toast({ variant: "destructive", title: "Account Deleted", description: "Your account has been permanently deleted."})}>
-                                        Delete Account
+                                    <AlertDialogAction onClick={handleDelete}>
+                                        Delete Data
                                     </AlertDialogAction>
                                 </AlertDialogFooter>
                             </AlertDialogContent>
@@ -167,6 +171,10 @@ export default function HealthSyncApp() {
     }
   };
 
+  if (isMobile === undefined) {
+    return null; // or a loading spinner
+  }
+
   if (isMobile) {
     return (
       <div className="flex flex-col h-screen bg-background">
@@ -208,3 +216,5 @@ export default function HealthSyncApp() {
     </div>
   );
 }
+
+    
