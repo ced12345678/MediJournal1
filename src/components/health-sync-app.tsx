@@ -53,12 +53,15 @@ type NavItem = typeof navItems[number];
 const AddEventForm = ({
   onAddEvent,
   defaultEventType,
+  hideAgeInput = false,
   children,
 }: {
   onAddEvent: (event: Omit<TimelineEvent, 'id'> | Omit<TimelineEvent, 'id'>[]) => void,
   defaultEventType?: EventType,
+  hideAgeInput?: boolean,
   children: React.ReactNode
 }) => {
+    const { user } = useAuth();
     const [title, setTitle] = useState('');
     const [date, setDate] = useState('');
     const [age, setAge] = useState('');
@@ -74,12 +77,17 @@ const AddEventForm = ({
     // New state for Disease medication
     const [medicationForDisease, setMedicationForDisease] = useState('');
 
-
-    useEffect(() => {
-        if (open && defaultEventType) {
-            setType(defaultEventType);
+     useEffect(() => {
+        if (open) {
+            if (defaultEventType) {
+                setType(defaultEventType);
+            }
+            if (user) {
+                const storedAge = localStorage.getItem(getNamespacedKey('age', user.id)) || '';
+                setAge(storedAge);
+            }
         }
-    }, [open, defaultEventType]);
+    }, [open, defaultEventType, user]);
     
     // Reset conditional fields when type changes
     useEffect(() => {
@@ -195,10 +203,12 @@ const AddEventForm = ({
                                 <Label htmlFor="date">Date</Label>
                                 <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
                             </div>
-                             <div className="space-y-2">
-                                <Label htmlFor="age">Age</Label>
-                                <Input id="age" type="number" value={age} onChange={(e) => setAge(e.target.value)} required />
-                            </div>
+                            {!hideAgeInput && (
+                                <div className="space-y-2">
+                                    <Label htmlFor="age">Age</Label>
+                                    <Input id="age" type="number" value={age} onChange={(e) => setAge(e.target.value)} required />
+                                </div>
+                            )}
                         </div>
                          <div className="space-y-2">
                             <Label htmlFor="type">Event Type</Label>
@@ -301,7 +311,7 @@ function DoctorVisits({ events, onAddEvent }: { events: TimelineEvent[], onAddEv
                 </Card>
             ))}
             <div className="flex justify-end">
-                <AddEventForm onAddEvent={onAddEvent} defaultEventType="Doctor Visit">
+                <AddEventForm onAddEvent={onAddEvent} defaultEventType="Doctor Visit" hideAgeInput={true}>
                     <Button>Add Visit</Button>
                 </AddEventForm>
             </div>
@@ -333,7 +343,7 @@ function Medication({ events, onAddEvent }: { events: TimelineEvent[], onAddEven
                 </Card>
             ))}
             <div className="flex justify-end">
-                 <AddEventForm onAddEvent={onAddEvent} defaultEventType="Medication">
+                 <AddEventForm onAddEvent={onAddEvent} defaultEventType="Medication" hideAgeInput={true}>
                     <Button>Add Medication</Button>
                 </AddEventForm>
             </div>
@@ -358,7 +368,7 @@ function Diseases({ events, onAddEvent }: { events: TimelineEvent[], onAddEvent:
                 </Card>
             ))}
             <div className="flex justify-end">
-                <AddEventForm onAddEvent={onAddEvent} defaultEventType="Disease">
+                <AddEventForm onAddEvent={onAddEvent} defaultEventType="Disease" hideAgeInput={true}>
                     <Button>Add Disease</Button>
                 </AddEventForm>
             </div>
@@ -433,7 +443,7 @@ function AccountSection() {
                             <Input id="name" value={name} disabled />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="age">Age</Label>
+                            <Label htmlFor="age">Current Age</Label>
                             <Input id="age" type="number" value={age} onChange={(e) => setAge(e.target.value)} />
                         </div>
                         <div className="space-y-2">
@@ -614,3 +624,5 @@ export default function HealthSyncApp() {
     </div>
   );
 }
+
+    
