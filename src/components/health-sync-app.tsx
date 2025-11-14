@@ -20,6 +20,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ThemeToggle } from './theme-toggle';
 import TimelineView, { type TimelineEvent, type EventType, eventTypes, initialEvents } from './timeline-view';
 import HospitalSharing from './hospital-sharing';
+import History from './history';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
@@ -41,31 +42,13 @@ const navItems = [
   { id: 'visits', label: 'Doctor Visits', icon: Stethoscope },
   { id: 'medication', label: 'Medication', icon: Pill },
   { id: 'diseases', label: 'Diseases', icon: Biohazard },
+  { id: 'history', label: 'History', icon: Users },
   { id: 'sharing', label: 'Hospital Sharing', icon: Share2 },
   { id: 'account', label: 'Account', icon: User },
 ];
 
 type NavItem = typeof navItems[number];
 
-function PlaceholderContent({ title }: { title: string }) {
-  return (
-    <div className="p-4 md:p-6">
-       <Card>
-        <CardHeader>
-          <CardTitle>{title}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm py-12">
-            <div className="flex flex-col items-center gap-2 text-center">
-              <h3 className="text-2xl font-bold tracking-tight">Coming Soon</h3>
-              <p className="text-sm text-muted-foreground">Content for this section is being developed.</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
 
 const AddEventForm = ({
   onAddEvent,
@@ -424,6 +407,7 @@ function AccountSection() {
       });
       // Also remove family history which has a different key structure
       localStorage.removeItem(getNamespacedKey('familyHistory', user.id));
+      localStorage.removeItem(getNamespacedKey('travelHistory', user.id));
       
       toast({ variant: "destructive", title: "All Data Deleted", description: "All your health data has been permanently deleted."});
       // We don't reload, logout will redirect
@@ -571,12 +555,12 @@ export default function HealthSyncApp() {
         return <Medication events={timelineEvents} onAddEvent={addEvent} />;
       case 'diseases':
         return <Diseases events={timelineEvents} onAddEvent={addEvent} />;
+      case 'history':
+        return <History />;
       case 'account':
         return <AccountSection />;
       case 'sharing':
         return <HospitalSharing />;
-      default:
-        return <PlaceholderContent title="Coming Soon" />;
     }
   };
 

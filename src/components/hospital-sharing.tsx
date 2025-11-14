@@ -34,7 +34,7 @@ export default function HospitalSharing() {
             weight: localStorage.getItem(getNamespacedKey('weight', user.id)) || 'N/A',
         };
         const timeline: TimelineEvent[] = JSON.parse(localStorage.getItem(getNamespacedKey('timeline', user.id)) || '[]');
-        const familyHistory = JSON.parse(localStorage.getItem(getNamespacedKey('familyHistory', user.id)) || '{}');
+        const familyHistoryText = localStorage.getItem(getNamespacedKey('familyHistory', user.id)) || '';
         const travelHistory = JSON.parse(localStorage.getItem(getNamespacedKey('travelHistory', user.id)) || '[]');
         
         const doc = new jsPDF() as jsPDFWithAutoTable;
@@ -107,15 +107,15 @@ export default function HospitalSharing() {
             item.description
         ]);
 
-        if (familyHistory?.analysis?.riskFactors) {
+        if (familyHistoryText) {
             if (lastY > 250) {
                 doc.addPage();
                 lastY = 20;
             }
             doc.setFontSize(16);
-            doc.text("Family History AI Summary", 14, lastY);
+            doc.text("Family History", 14, lastY);
             doc.setFontSize(10);
-            const splitText = doc.splitTextToSize(familyHistory.analysis.riskFactors, 180);
+            const splitText = doc.splitTextToSize(familyHistoryText, 180);
             doc.text(splitText, 14, lastY + 8);
             lastY += splitText.length * 5 + 15;
         }
