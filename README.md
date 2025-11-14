@@ -1,6 +1,6 @@
 # Firebase Studio - HealthSync
 
-This is a Next.js starter app called HealthSync, created in Firebase Studio. It's a personal health companion that helps you track your medical history.
+This is a Next.js starter app called HealthSync. It's a personal health companion that helps you track your medical history.
 
 ## Features
 
@@ -52,4 +52,3 @@ After the deployment finishes, the CLI will provide you with the URL to your liv
 
 For more details, see the [Firebase App Hosting documentation](https://firebase.google.com/docs/hosting/frameworks/nextjs).
 
-    
