@@ -12,8 +12,6 @@ import {
   Map,
   Sparkle,
   Biohazard,
-  Ruler,
-  Weight,
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
@@ -576,5 +574,3 @@ export default function HealthSyncApp() {
     </div>
   );
 }
-
-    
