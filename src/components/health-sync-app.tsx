@@ -43,8 +43,6 @@ const navItems = [
   { id: 'visits', label: 'Doctor Visits', icon: Stethoscope },
   { id: 'medication', label: 'Medication', icon: Pill },
   { id: 'diseases', label: 'Diseases', icon: Biohazard },
-  { id: 'history', label: 'History', icon: Users },
-  { id: 'tips', label: 'SafeTravels', icon: Map },
   { id: 'sharing', label: 'Hospital Sharing', icon: Share2 },
   { id: 'account', label: 'Account', icon: User },
 ];
@@ -705,12 +703,8 @@ export default function HealthSyncApp() {
         return <Medication events={timelineEvents} onAddEvent={addEvent} />;
       case 'diseases':
         return <Diseases events={timelineEvents} onAddEvent={addEvent} />;
-      case 'history':
-        return <History />;
       case 'account':
         return <AccountSection />;
-      case 'tips':
-        return <SafeTravels />;
       case 'sharing':
         return <HospitalSharing />;
       default:
