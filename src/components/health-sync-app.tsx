@@ -312,21 +312,24 @@ type TravelRecord = {
     id: string;
     location: string;
     year: string;
+    duration: string;
     notes: string;
 }
 
 const AddTravelRecordForm = ({ onAdd }: { onAdd: (record: Omit<TravelRecord, 'id'>) => void }) => {
     const [location, setLocation] = useState('');
     const [year, setYear] = useState('');
+    const [duration, setDuration] = useState('');
     const [notes, setNotes] = useState('');
     const [open, setOpen] = useState(false);
     
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!location || !year) return;
-        onAdd({ location, year, notes });
+        onAdd({ location, year, duration, notes });
         setLocation('');
         setYear('');
+        setDuration('');
         setNotes('');
         setOpen(false);
     };
@@ -341,14 +344,18 @@ const AddTravelRecordForm = ({ onAdd }: { onAdd: (record: Omit<TravelRecord, 'id
                     <DialogTitle>Add Travel Record</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="location">Location</Label>
+                        <Input id="location" value={location} onChange={(e) => setLocation(e.target.value)} required />
+                    </div>
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="location">Location</Label>
-                            <Input id="location" value={location} onChange={(e) => setLocation(e.target.value)} required />
-                        </div>
                         <div className="space-y-2">
                             <Label htmlFor="year">Year</Label>
                             <Input id="year" type="number" value={year} onChange={(e) => setYear(e.target.value)} required />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="duration">Duration (e.g., 2 weeks)</Label>
+                            <Input id="duration" value={duration} onChange={(e) => setDuration(e.target.value)} />
                         </div>
                     </div>
                     <div className="space-y-2">
@@ -367,8 +374,8 @@ const AddTravelRecordForm = ({ onAdd }: { onAdd: (record: Omit<TravelRecord, 'id
 
 function History() {
     const initialPlaces: TravelRecord[] = [
-        {id: '1', location: 'Mexico', year: '2022', notes: 'Vacation, no health issues.'},
-        {id: '2', location: 'India', year: '2019', notes: 'Work trip, received Typhoid vaccine before travel.'}
+        {id: '1', location: 'Mexico', year: '2022', duration: '1 week', notes: 'Vacation, no health issues.'},
+        {id: '2', location: 'India', year: '2019', duration: '3 weeks', notes: 'Work trip, received Typhoid vaccine before travel.'}
     ]
     const [places, setPlaces] = useState<TravelRecord[]>([]);
 
@@ -412,7 +419,7 @@ function History() {
                         <CardContent className="space-y-4">
                              {places.map(place => (
                                 <div key={place.id} className="p-3 rounded-lg border bg-card">
-                                    <p className="font-semibold">{place.location} - {place.year}</p>
+                                    <p className="font-semibold">{place.location} - {place.year}{place.duration && ` (${place.duration})`}</p>
                                     <p className="text-sm text-muted-foreground">{place.notes}</p>
                                 </div>
                             ))}
