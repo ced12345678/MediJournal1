@@ -11,7 +11,7 @@ import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 
-const eventIcons = {
+export const eventIcons = {
   Vaccination: Syringe,
   Medication: Pill,
   'Doctor Visit': Stethoscope,
@@ -19,7 +19,7 @@ const eventIcons = {
   Other: HeartPulse
 };
 
-const eventTypes = Object.keys(eventIcons);
+export const eventTypes = Object.keys(eventIcons);
 export type EventType = keyof typeof eventIcons;
 
 export type TimelineEvent = {
@@ -32,10 +32,11 @@ export type TimelineEvent = {
   details?: {
     height?: string;
     weight?: string;
+    status?: 'Active' | 'Stopped';
   }
 };
 
-const initialEvents: TimelineEvent[] = [
+export const initialEvents: TimelineEvent[] = [
     {
         id: '1', age: 5, date: '2005-01-15', title: 'MMR Vaccine',
         description: 'Received the Measles, Mumps, and Rubella vaccine.',
@@ -51,6 +52,7 @@ const initialEvents: TimelineEvent[] = [
         id: '3', age: 15, date: '2015-06-01', title: 'Wisdom Tooth Extraction',
         description: 'Prescribed Ibuprofen for pain management.',
         type: 'Medication',
+        details: { status: 'Stopped' }
     },
     {
         id: '4', age: 20, date: '2020-03-10', title: 'Flu Shot',
@@ -181,43 +183,20 @@ const AddEventForm = ({ onAddEvent }: { onAddEvent: (event: Omit<TimelineEvent, 
     )
 }
 
-export default function TimelineView() {
-  const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
+export default function TimelineView({ events, onAddEvent }: { events: TimelineEvent[], onAddEvent: (event: Omit<TimelineEvent, 'id'>) => void }) {
   const [selectedAge, setSelectedAge] = useState<number | null>(null);
   
-  useEffect(() => {
-    try {
-      const storedEvents = localStorage.getItem('healthsync-timeline');
-      if (storedEvents) {
-        setTimelineEvents(JSON.parse(storedEvents));
-      } else {
-        setTimelineEvents(initialEvents);
-        localStorage.setItem('healthsync-timeline', JSON.stringify(initialEvents));
-      }
-    } catch (error) {
-      console.error("Failed to parse timeline events from localStorage", error);
-      setTimelineEvents(initialEvents);
-    }
-  }, []);
-
-  const addEvent = (event: Omit<TimelineEvent, 'id'>) => {
-    const newEvent = { ...event, id: self.crypto.randomUUID() };
-    const updatedEvents = [...timelineEvents, newEvent]
-    setTimelineEvents(updatedEvents);
-    localStorage.setItem('healthsync-timeline', JSON.stringify(updatedEvents));
-  }
-
   const ages = useMemo(() => {
-    const uniqueAges = [...new Set(timelineEvents.map(e => e.age))];
+    const uniqueAges = [...new Set(events.map(e => e.age))];
     return uniqueAges.sort((a,b) => a - b);
-  }, [timelineEvents]);
+  }, [events]);
 
   const filteredEvents = useMemo(() => {
     if (selectedAge === null) return [];
-    return timelineEvents
+    return events
       .filter(e => e.age === selectedAge)
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  }, [timelineEvents, selectedAge]);
+  }, [events, selectedAge]);
 
   useEffect(() => {
     if (ages.length > 0 && selectedAge === null) {
@@ -228,7 +207,7 @@ export default function TimelineView() {
 
   return (
     <div className="p-4 md:p-6 lg:p-8 relative">
-        <AddEventForm onAddEvent={addEvent} />
+        <AddEventForm onAddEvent={onAddEvent} />
         <div className="max-w-4xl mx-auto">
             <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
                 {ages.map(age => (
@@ -260,3 +239,5 @@ export default function TimelineView() {
     </div>
   );
 }
+
+    

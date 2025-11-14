@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Users,
   HeartPulse,
@@ -12,18 +12,24 @@ import {
   Pill,
   Map,
   Sparkle,
+  PlusCircle,
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ThemeToggle } from './theme-toggle';
-import TimelineView from './timeline-view';
+import TimelineView, { type TimelineEvent, type EventType, eventTypes, initialEvents } from './timeline-view';
 import FamilyHistoryAnalysis from './family-history-analysis';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Badge } from './ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from './ui/dialog';
+import { Input } from './ui/input';
+import { Textarea } from './ui/textarea';
+import { Label } from './ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
 const navItems = [
   { id: 'timeline', label: 'Life', icon: Sparkle },
@@ -57,38 +63,121 @@ function PlaceholderContent({ title }: { title: string }) {
   );
 }
 
-function DoctorVisits() {
-    // Dummy data
-    const visits = [
-        { id: 1, date: '2023-10-26', reason: 'Annual Check-up', doctor: 'Dr. Smith', notes: 'Routine check-up, all vitals normal. Discussed diet and exercise.' },
-        { id: 2, date: '2023-05-12', reason: 'Sore Throat', doctor: 'Dr. Jones', notes: 'Diagnosed with strep throat. Prescribed Amoxicillin for 10 days.' },
-    ];
+const AddEventForm = ({
+  onAddEvent,
+  defaultEventType,
+  children,
+}: {
+  onAddEvent: (event: Omit<TimelineEvent, 'id'>) => void,
+  defaultEventType?: EventType,
+  children: React.ReactNode
+}) => {
+    const [title, setTitle] = useState('');
+    const [date, setDate] = useState('');
+    const [age, setAge] = useState('');
+    const [description, setDescription] = useState('');
+    const [type, setType] = useState<EventType>(defaultEventType || 'Other');
+    const [open, setOpen] = useState(false);
+
+    useEffect(() => {
+        if (defaultEventType) {
+            setType(defaultEventType);
+        }
+    }, [defaultEventType]);
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!title || !date || !type || !age) return;
+        onAddEvent({ title, date, description, type, age: parseInt(age) });
+        setTitle('');
+        setDate('');
+        setAge('');
+        setDescription('');
+        setType(defaultEventType || 'Other');
+        setOpen(false);
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                {children}
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Add New Timeline Event</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="title">Title / Reason</Label>
+                        <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+                    </div>
+                     <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="date">Date</Label>
+                            <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+                        </div>
+                         <div className="space-y-2">
+                            <Label htmlFor="age">Age</Label>
+                            <Input id="age" type="number" value={age} onChange={(e) => setAge(e.target.value)} required />
+                        </div>
+                    </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="type">Event Type</Label>
+                        <Select onValueChange={(value) => setType(value as EventType)} value={type}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select an event type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {eventTypes.map(type => (
+                                    <SelectItem key={type} value={type}>{type}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="description">Description / Notes</Label>
+                        <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} />
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild>
+                           <Button type="button" variant="ghost">Cancel</Button>
+                        </DialogClose>
+                        <Button type="submit">Add Event</Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
+    )
+}
+
+function DoctorVisits({ events, onAddEvent }: { events: TimelineEvent[], onAddEvent: (event: Omit<TimelineEvent, 'id'>) => void }) {
+    const visits = events.filter(e => e.type === 'Doctor Visit').sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     return (
         <div className="p-4 md:p-6 space-y-4">
             {visits.map(visit => (
                 <Card key={visit.id}>
                     <CardHeader>
-                        <CardTitle>{visit.reason}</CardTitle>
-                        <CardDescription>{new Date(visit.date).toLocaleDateString()} - with {visit.doctor}</CardDescription>
+                        <CardTitle>{visit.title}</CardTitle>
+                        <CardDescription>{new Date(visit.date).toLocaleDateString()} (Age {visit.age})</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-sm">{visit.notes}</p>
+                        <p className="text-sm">{visit.description}</p>
                     </CardContent>
                 </Card>
             ))}
             <div className="flex justify-end">
-                <Button>Add Visit</Button>
+                <AddEventForm onAddEvent={onAddEvent} defaultEventType="Doctor Visit">
+                    <Button>Add Visit</Button>
+                </AddEventForm>
             </div>
         </div>
     );
 }
 
-function Medication() {
-     const medications = [
-        { id: 1, name: 'Amoxicillin', dosage: '500mg', frequency: 'Twice a day', reason: 'Strep Throat', dates: 'May 2023', status: 'Stopped' },
-        { id: 2, name: 'Ibuprofen', dosage: '200mg', frequency: 'As needed for pain', reason: 'General Pain', dates: 'Ongoing', status: 'Active' },
-    ];
+function Medication({ events, onAddEvent }: { events: TimelineEvent[], onAddEvent: (event: Omit<TimelineEvent, 'id'>) => void }) {
+     const medications = events.filter(e => e.type === 'Medication').sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
     return (
         <div className="p-4 md:p-6 space-y-4">
             {medications.map(med => (
@@ -96,16 +185,23 @@ function Medication() {
                     <CardHeader>
                         <div className="flex justify-between items-start">
                             <div>
-                                <CardTitle>{med.name} ({med.dosage})</CardTitle>
-                                <CardDescription>{med.frequency} - {med.reason} ({med.dates})</CardDescription>
+                                <CardTitle>{med.title}</CardTitle>
+                                <CardDescription>Started: {new Date(med.date).toLocaleDateString()} (Age {med.age})</CardDescription>
                             </div>
-                             <Badge variant={med.status === 'Active' ? 'default' : 'secondary'} className={med.status === 'Active' ? 'bg-green-600' : ''}>{med.status}</Badge>
+                            <Badge variant={med.details?.status === 'Active' ? 'default' : 'secondary'} className={med.details?.status === 'Active' ? 'bg-green-600' : ''}>
+                                {med.details?.status || 'Stopped'}
+                            </Badge>
                         </div>
                     </CardHeader>
+                     <CardContent>
+                        <p className="text-sm">{med.description}</p>
+                    </CardContent>
                 </Card>
             ))}
             <div className="flex justify-end">
-                <Button>Add Medication</Button>
+                 <AddEventForm onAddEvent={onAddEvent} defaultEventType="Medication">
+                    <Button>Add Medication</Button>
+                </AddEventForm>
             </div>
         </div>
     );
@@ -248,15 +344,38 @@ export default function HealthSyncApp() {
   const [activeItem, setActiveItem] = useState<NavItem>(navItems[0]);
   const isMobile = useIsMobile();
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
 
+  useEffect(() => {
+    try {
+      const storedEvents = localStorage.getItem('healthsync-timeline');
+      if (storedEvents) {
+        setTimelineEvents(JSON.parse(storedEvents));
+      } else {
+        setTimelineEvents(initialEvents);
+        localStorage.setItem('healthsync-timeline', JSON.stringify(initialEvents));
+      }
+    } catch (error) {
+      console.error("Failed to parse timeline events from localStorage", error);
+      setTimelineEvents(initialEvents);
+    }
+  }, []);
+
+  const addEvent = (event: Omit<TimelineEvent, 'id'>) => {
+    const newEvent = { ...event, id: self.crypto.randomUUID() };
+    const updatedEvents = [...timelineEvents, newEvent]
+    setTimelineEvents(updatedEvents);
+    localStorage.setItem('healthsync-timeline', JSON.stringify(updatedEvents));
+  }
+  
   const renderContent = () => {
     switch (activeItem.id) {
       case 'timeline':
-        return <TimelineView />;
+        return <TimelineView events={timelineEvents} onAddEvent={addEvent} />;
       case 'visits':
-        return <DoctorVisits />;
+        return <DoctorVisits events={timelineEvents} onAddEvent={addEvent} />;
       case 'medication':
-        return <Medication />;
+        return <Medication events={timelineEvents} onAddEvent={addEvent} />;
       case 'history':
         return <History />;
       case 'account':
@@ -315,3 +434,5 @@ export default function HealthSyncApp() {
     </div>
   );
 }
+
+    
