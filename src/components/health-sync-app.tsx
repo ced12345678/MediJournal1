@@ -172,7 +172,7 @@ const AddEventForm = ({
                     </div>
 
                     {type === 'Doctor Visit' && (
-                        <div className="space-y-4 pt-2 border-t">
+                        <div className="space-y-4 pt-4 border-t">
                             <div className="space-y-2">
                                 <Label>Visit Type</Label>
                                 <RadioGroup value={visitType} onValueChange={(v) => setVisitType(v as 'Casual Visit' | 'Serious Visit')} className="flex gap-4">
@@ -187,7 +187,7 @@ const AddEventForm = ({
                                 </RadioGroup>
                             </div>
                              {visitType === 'Serious Visit' && (
-                                <div className="space-y-4 pl-2">
+                                <div className="space-y-4 pl-2 pt-2 border-l ml-2">
                                     <div className="space-y-2">
                                         <Label htmlFor="diseaseName">Disease Name</Label>
                                         <Input id="diseaseName" value={diseaseName} onChange={(e) => setDiseaseName(e.target.value)} placeholder="e.g., Influenza" />
@@ -576,3 +576,5 @@ export default function HealthSyncApp() {
     </div>
   );
 }
+
+    
