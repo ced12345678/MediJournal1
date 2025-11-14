@@ -22,6 +22,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { Badge } from './ui/badge';
 
 const navItems = [
   { id: 'timeline', label: 'Agewise Timeline', icon: Clock },
@@ -84,16 +85,21 @@ function DoctorVisits() {
 
 function Medication() {
      const medications = [
-        { id: 1, name: 'Amoxicillin', dosage: '500mg', frequency: 'Twice a day', reason: 'Strep Throat', dates: 'May 2023' },
-        { id: 2, name: 'Ibuprofen', dosage: '200mg', frequency: 'As needed for pain', reason: 'General Pain', dates: 'Ongoing' },
+        { id: 1, name: 'Amoxicillin', dosage: '500mg', frequency: 'Twice a day', reason: 'Strep Throat', dates: 'May 2023', status: 'Stopped' },
+        { id: 2, name: 'Ibuprofen', dosage: '200mg', frequency: 'As needed for pain', reason: 'General Pain', dates: 'Ongoing', status: 'Active' },
     ];
     return (
         <div className="p-4 md:p-6 space-y-4">
             {medications.map(med => (
                 <Card key={med.id}>
                     <CardHeader>
-                        <CardTitle>{med.name} ({med.dosage})</CardTitle>
-                        <CardDescription>{med.frequency} - {med.reason} ({med.dates})</CardDescription>
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <CardTitle>{med.name} ({med.dosage})</CardTitle>
+                                <CardDescription>{med.frequency} - {med.reason} ({med.dates})</CardDescription>
+                            </div>
+                             <Badge variant={med.status === 'Active' ? 'default' : 'secondary'} className={med.status === 'Active' ? 'bg-green-600' : ''}>{med.status}</Badge>
+                        </div>
                     </CardHeader>
                 </Card>
             ))}
@@ -308,3 +314,5 @@ export default function HealthSyncApp() {
     </div>
   );
 }
+
+    
