@@ -39,30 +39,7 @@ export type TimelineEvent = {
   }
 };
 
-export const initialEvents: TimelineEvent[] = [
-    {
-        id: '1', age: 0, date: '1999-05-20', title: 'Born',
-        description: 'Born at City General Hospital.',
-        type: 'Other',
-    },
-    {
-        id: '2', age: 1, date: '2000-07-15', title: 'DTaP & Polio Vaccine',
-        description: 'Received first doses of DTaP and Polio vaccines.',
-        type: 'Vaccination',
-    },
-    {
-        id: '4', age: 6, date: '2005-09-10', title: 'Broken Arm',
-        description: 'Fell from monkey bars, resulting in a fractured left radius.',
-        type: 'Doctor Visit',
-        details: { visitType: 'Serious Visit', diseaseName: 'Fractured Radius' }
-    },
-    {
-        id: '11', age: 25, date: '2024-06-10', title: 'Annual Check-up',
-        description: 'Routine physical. All vitals normal. Blood work looks good.',
-        type: 'Doctor Visit',
-        details: { visitType: 'Casual Visit' }
-    },
-];
+export const initialEvents: TimelineEvent[] = [];
 
 const TimelineItem = ({ event, isLast }: { event: TimelineEvent; isLast: boolean }) => {
   const Icon = eventIcons[event.type] || HelpCircle;
