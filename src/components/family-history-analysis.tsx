@@ -60,10 +60,11 @@ export default function FamilyHistoryAnalysis() {
   };
 
   useEffect(() => {
-    if (scrollAreaRef.current) {
-        scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+    const viewport = scrollAreaRef.current?.querySelector('div');
+    if (viewport) {
+      viewport.scrollTop = viewport.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, isPending]);
 
   const updateLocalStorage = (msgs: ChatMessage[], analysis: AnalyzeFamilyHistoryOutput | null) => {
     localStorage.setItem('healthsync-familyHistory', JSON.stringify({ messages: msgs, analysis }));
@@ -117,7 +118,7 @@ export default function FamilyHistoryAnalysis() {
 
   if (analysisState.data) {
     return (
-        <div className="p-4 md:p-6 grid gap-6">
+        <div className="grid gap-6">
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -160,7 +161,7 @@ export default function FamilyHistoryAnalysis() {
   }
 
   return (
-    <div className="p-4 md:p-6 flex flex-col h-full">
+    <div className="flex flex-col h-full">
       <Card className="flex-1 flex flex-col">
         <CardHeader>
           <CardTitle>Family History AI Assistant</CardTitle>
@@ -231,5 +232,3 @@ export default function FamilyHistoryAnalysis() {
     </div>
   );
 }
-
-    

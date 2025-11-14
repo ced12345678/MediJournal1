@@ -2,15 +2,15 @@
 
 import React, { useState } from 'react';
 import {
-  FileText,
   Users,
   HeartPulse,
-  Repeat,
-  GitCommitHorizontal,
   Share2,
   User,
   PanelLeft,
   Stethoscope,
+  Clock,
+  Pill,
+  Map,
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
@@ -21,14 +21,15 @@ import FamilyHistoryAnalysis from './family-history-analysis';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 
 const navItems = [
-  { id: 'timeline', label: 'Timeline View', icon: GitCommitHorizontal },
-  { id: 'family-history', label: 'Family History', icon: Users },
-  { id: 'records', label: 'Private Records', icon: FileText },
-  { id: 'prescriptions', label: 'Prescriptions', icon: Repeat },
+  { id: 'timeline', label: 'Agewise Timeline', icon: Clock },
+  { id: 'visits', label: 'Doctor Visits', icon: Stethoscope },
+  { id: 'medication', label: 'Medication', icon: Pill },
+  { id: 'history', label: 'History', icon: Users },
   { id: 'tips', label: 'Health Tips', icon: HeartPulse },
-  { id: 'sharing', label: 'Data Sharing', icon: Share2 },
+  { id: 'sharing', label: 'Hospital Sharing', icon: Share2 },
   { id: 'account', label: 'Account', icon: User },
 ];
 
@@ -52,6 +53,93 @@ function PlaceholderContent({ title }: { title: string }) {
       </Card>
     </div>
   );
+}
+
+function DoctorVisits() {
+    // Dummy data
+    const visits = [
+        { id: 1, date: '2023-10-26', reason: 'Annual Check-up', doctor: 'Dr. Smith', notes: 'Routine check-up, all vitals normal. Discussed diet and exercise.' },
+        { id: 2, date: '2023-05-12', reason: 'Sore Throat', doctor: 'Dr. Jones', notes: 'Diagnosed with strep throat. Prescribed Amoxicillin for 10 days.' },
+    ];
+
+    return (
+        <div className="p-4 md:p-6 space-y-4">
+            {visits.map(visit => (
+                <Card key={visit.id}>
+                    <CardHeader>
+                        <CardTitle>{visit.reason}</CardTitle>
+                        <CardDescription>{new Date(visit.date).toLocaleDateString()} - with {visit.doctor}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-sm">{visit.notes}</p>
+                    </CardContent>
+                </Card>
+            ))}
+            <div className="flex justify-end">
+                <Button>Add Visit</Button>
+            </div>
+        </div>
+    );
+}
+
+function Medication() {
+     const medications = [
+        { id: 1, name: 'Amoxicillin', dosage: '500mg', frequency: 'Twice a day', reason: 'Strep Throat', dates: 'May 2023' },
+        { id: 2, name: 'Ibuprofen', dosage: '200mg', frequency: 'As needed for pain', reason: 'General Pain', dates: 'Ongoing' },
+    ];
+    return (
+        <div className="p-4 md:p-6 space-y-4">
+            {medications.map(med => (
+                <Card key={med.id}>
+                    <CardHeader>
+                        <CardTitle>{med.name} ({med.dosage})</CardTitle>
+                        <CardDescription>{med.frequency} - {med.reason} ({med.dates})</CardDescription>
+                    </CardHeader>
+                </Card>
+            ))}
+            <div className="flex justify-end">
+                <Button>Add Medication</Button>
+            </div>
+        </div>
+    );
+}
+
+function History() {
+    const places = [
+        {id: 1, location: 'Mexico', year: 2022, notes: 'Vacation, no health issues.'},
+        {id: 2, location: 'India', year: 2019, notes: 'Work trip, received Typhoid vaccine before travel.'}
+    ]
+    return (
+        <div className="p-4 md:p-6">
+            <Tabs defaultValue="family">
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="family">Family History</TabsTrigger>
+                    <TabsTrigger value="travel">Places Travelled</TabsTrigger>
+                </TabsList>
+                <TabsContent value="family">
+                    <FamilyHistoryAnalysis />
+                </TabsContent>
+                <TabsContent value="travel">
+                     <Card>
+                        <CardHeader>
+                            <CardTitle>Travel History</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                             {places.map(place => (
+                                <div key={place.id} className="p-3 rounded-lg border bg-card">
+                                    <p className="font-semibold">{place.location} - {place.year}</p>
+                                    <p className="text-sm text-muted-foreground">{place.notes}</p>
+                                </div>
+                            ))}
+                            <div className="flex justify-end pt-4">
+                                <Button>Add Travel Record</Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+            </Tabs>
+        </div>
+    )
 }
 
 function AccountSection() {
@@ -84,6 +172,10 @@ function AccountSection() {
                     <div className="space-y-1">
                         <p className="text-sm font-medium text-muted-foreground">User ID</p>
                         <p className="font-mono text-sm bg-muted p-2 rounded-md break-all">{userId}</p>
+                    </div>
+                     <div className="space-y-2">
+                        <p className="font-semibold">Name: John Doe</p>
+                        <p className="font-semibold">Age: 34</p>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-2">
                         <AlertDialog>
@@ -154,18 +246,18 @@ export default function HealthSyncApp() {
     switch (activeItem.id) {
       case 'timeline':
         return <TimelineView />;
-      case 'family-history':
-        return <FamilyHistoryAnalysis />;
+      case 'visits':
+        return <DoctorVisits />;
+      case 'medication':
+        return <Medication />;
+      case 'history':
+        return <History />;
       case 'account':
         return <AccountSection />;
-      case 'records':
-        return <PlaceholderContent title="Private Records" />;
-      case 'prescriptions':
-        return <PlaceholderContent title="Recurrence & Prescriptions" />;
       case 'tips':
         return <PlaceholderContent title="Health Tips" />;
       case 'sharing':
-        return <PlaceholderContent title="Data Sharing" />;
+        return <PlaceholderContent title="Hospital Sharing" />;
       default:
         return <PlaceholderContent title="Coming Soon" />;
     }
@@ -216,5 +308,3 @@ export default function HealthSyncApp() {
     </div>
   );
 }
-
-    

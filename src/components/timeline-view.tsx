@@ -1,24 +1,21 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Syringe, Pill, Stethoscope, FilePlus2, HeartPulse, PlusCircle, Activity, Shield, Baby } from 'lucide-react';
+import { Syringe, Pill, Stethoscope, HeartPulse, PlusCircle, Weight, Ruler } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from './ui/dialog';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 
 const eventIcons = {
-  Diagnosis: Stethoscope,
   Vaccination: Syringe,
-  Procedure: Activity,
-  Prescription: Pill,
-  Allergy: Shield,
-  'Check-up': Stethoscope,
-  Birth: Baby,
+  Medication: Pill,
+  'Doctor Visit': Stethoscope,
+  Measurement: Ruler,
   Other: HeartPulse
 };
 
@@ -27,81 +24,78 @@ export type EventType = keyof typeof eventIcons;
 
 export type TimelineEvent = {
   id: string;
+  age: number;
   date: string;
   title: string;
   description: string;
   type: EventType;
+  details?: {
+    height?: string;
+    weight?: string;
+  }
 };
 
 const initialEvents: TimelineEvent[] = [
-  {
-    id: '1',
-    date: '2005-01-15',
-    title: 'First Flu Diagnosis',
-    description: 'Diagnosed with Influenza A.',
-    type: 'Diagnosis',
-  },
-  {
-    id: '2',
-    date: '2010-03-22',
-    title: 'Vaccination: MMR',
-    description: 'Received Measles, Mumps, and Rubella vaccine.',
-    type: 'Vaccination',
-  },
-  {
-    id: '3',
-    date: '2018-06-05',
-    title: 'Procedure: Tonsillectomy',
-    description: 'Surgical removal of tonsils.',
-    type: 'Procedure',
-  },
-  {
-    id: '4',
-    date: '2021-09-10',
-    title: 'Prescription: Amoxicillin',
-    description: '10-day course for bacterial infection.',
-    type: 'Prescription',
-  },
-  {
-    id: '5',
-    date: '2023-02-20',
-    title: 'New Allergy: Penicillin',
-    description: 'Discovered allergy after a reaction.',
-    type: 'Allergy',
-  },
-  {
-    id: '6',
-    date: '2023-11-01',
-    title: 'Annual Check-up',
-    description: 'Routine physical examination. All clear.',
-    type: 'Check-up',
-  },
+    {
+        id: '1', age: 5, date: '2005-01-15', title: 'MMR Vaccine',
+        description: 'Received the Measles, Mumps, and Rubella vaccine.',
+        type: 'Vaccination',
+    },
+    {
+        id: '2', age: 10, date: '2010-08-20', title: 'Annual Physical',
+        description: 'Height and weight measured.',
+        type: 'Measurement',
+        details: { height: "4'5\"", weight: "70 lbs" }
+    },
+    {
+        id: '3', age: 15, date: '2015-06-01', title: 'Wisdom Tooth Extraction',
+        description: 'Prescribed Ibuprofen for pain management.',
+        type: 'Medication',
+    },
+    {
+        id: '4', age: 20, date: '2020-03-10', title: 'Flu Shot',
+        description: 'Annual influenza vaccination.',
+        type: 'Vaccination',
+    },
+    {
+        id: '5', age: 25, date: '2025-02-05', title: 'Annual Check-up',
+        description: 'Routine physical. All vitals normal.',
+        type: 'Doctor Visit',
+    },
 ];
-
 
 const TimelineItem = ({ event, isLast }: { event: TimelineEvent; isLast: boolean }) => {
   const Icon = eventIcons[event.type] || HeartPulse;
-  const formattedDate = new Date(event.date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
   return (
-    <div className="relative pl-10 md:pl-16 py-4">
-      {!isLast && <div className="absolute left-4 top-0 h-full w-0.5 bg-border -translate-x-1/2" />}
+    <div className="relative pl-12 py-4 group">
+      {!isLast && <div className="absolute left-5 top-0 h-full w-0.5 bg-border -translate-x-1/2" />}
       
-      <div className="absolute left-4 top-6 -translate-x-1/2 -translate-y-1/2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
-          <Icon className="h-4 w-4" />
+      <div className="absolute left-5 top-5 -translate-x-1/2 -translate-y-1/2">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
+          <Icon className="h-5 w-5" />
         </div>
       </div>
       
-      <div className="space-y-1">
-        <p className="text-sm font-medium text-muted-foreground">{formattedDate}</p>
-        <h3 className="text-lg font-semibold text-foreground">{event.title}</h3>
-        <p className="text-sm text-foreground/80">{event.description}</p>
-        <Badge variant="outline" className="mt-2 bg-accent/20 text-accent-foreground border-accent/50">{event.type}</Badge>
-      </div>
+      <Card>
+        <CardHeader>
+            <div className="flex justify-between items-start">
+                <div>
+                    <CardTitle className="text-lg font-semibold">{event.title}</CardTitle>
+                    <p className="text-sm font-medium text-muted-foreground">Age {event.age} &bull; {new Date(event.date).toLocaleDateString()}</p>
+                </div>
+                <div className="text-sm font-bold text-primary bg-primary/10 px-3 py-1 rounded-full">{event.type}</div>
+            </div>
+        </CardHeader>
+        <CardContent>
+            <p className="text-sm text-foreground/80 mb-2">{event.description}</p>
+            {event.details && (
+                 <div className="flex gap-4 pt-2 border-t mt-2">
+                    {event.details.height && <div className="flex items-center gap-2 text-sm"><Ruler className="w-4 h-4 text-muted-foreground" /> <span>{event.details.height}</span></div>}
+                    {event.details.weight && <div className="flex items-center gap-2 text-sm"><Weight className="w-4 h-4 text-muted-foreground" /> <span>{event.details.weight}</span></div>}
+                 </div>
+            )}
+        </CardContent>
+      </Card>
     </div>
   );
 };
@@ -109,16 +103,18 @@ const TimelineItem = ({ event, isLast }: { event: TimelineEvent; isLast: boolean
 const AddEventForm = ({ onAddEvent }: { onAddEvent: (event: Omit<TimelineEvent, 'id'>) => void }) => {
     const [title, setTitle] = useState('');
     const [date, setDate] = useState('');
+    const [age, setAge] = useState('');
     const [description, setDescription] = useState('');
     const [type, setType] = useState<EventType>('Other');
     const [open, setOpen] = useState(false);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!title || !date || !type) return;
-        onAddEvent({ title, date, description, type });
+        if (!title || !date || !type || !age) return;
+        onAddEvent({ title, date, description, type, age: parseInt(age) });
         setTitle('');
         setDate('');
+        setAge('');
         setDescription('');
         setType('Other');
         setOpen(false);
@@ -141,9 +137,15 @@ const AddEventForm = ({ onAddEvent }: { onAddEvent: (event: Omit<TimelineEvent, 
                         <Label htmlFor="title">Title</Label>
                         <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
                     </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="date">Date</Label>
-                        <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+                     <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="date">Date</Label>
+                            <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+                        </div>
+                         <div className="space-y-2">
+                            <Label htmlFor="age">Age</Label>
+                            <Input id="age" type="number" value={age} onChange={(e) => setAge(e.target.value)} required />
+                        </div>
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="type">Event Type</Label>
@@ -183,18 +185,20 @@ export default function TimelineView() {
       if (storedEvents) {
         setTimelineEvents(JSON.parse(storedEvents));
       } else {
-        setTimelineEvents(initialEvents);
-        localStorage.setItem('healthsync-timeline', JSON.stringify(initialEvents));
+        const sortedInitial = initialEvents.sort((a,b) => b.age - a.age);
+        setTimelineEvents(sortedInitial);
+        localStorage.setItem('healthsync-timeline', JSON.stringify(sortedInitial));
       }
     } catch (error) {
       console.error("Failed to parse timeline events from localStorage", error);
-      setTimelineEvents(initialEvents);
+      const sortedInitial = initialEvents.sort((a,b) => b.age - a.age);
+      setTimelineEvents(sortedInitial);
     }
   }, []);
 
   const addEvent = (event: Omit<TimelineEvent, 'id'>) => {
     const newEvent = { ...event, id: self.crypto.randomUUID() };
-    const updatedEvents = [...timelineEvents, newEvent].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const updatedEvents = [...timelineEvents, newEvent].sort((a,b) => b.age - a.age);
     setTimelineEvents(updatedEvents);
     localStorage.setItem('healthsync-timeline', JSON.stringify(updatedEvents));
   }
@@ -214,5 +218,3 @@ export default function TimelineView() {
     </div>
   );
 }
-
-    
