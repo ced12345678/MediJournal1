@@ -20,6 +20,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ThemeToggle } from './theme-toggle';
 import TimelineView, { type TimelineEvent, type EventType, eventTypes, initialEvents } from './timeline-view';
 import FamilyHistoryAnalysis from './family-history-analysis';
+import HealthTips from './health-tips';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
@@ -381,7 +382,7 @@ export default function HealthSyncApp() {
       case 'account':
         return <AccountSection />;
       case 'tips':
-        return <PlaceholderContent title="Health Tips" />;
+        return <HealthTips />;
       case 'sharing':
         return <PlaceholderContent title="Hospital Sharing" />;
       default:
@@ -434,5 +435,3 @@ export default function HealthSyncApp() {
     </div>
   );
 }
-
-    
