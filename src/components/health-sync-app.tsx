@@ -12,14 +12,12 @@ import {
   Sparkle,
   Biohazard,
   LogOut,
-  ChevronDown,
-  Menu,
-  Settings,
   Moon,
   Sun,
+  Settings,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import TimelineView, { type TimelineEvent, type EventType } from './timeline-view';
+import TimelineView, { type TimelineEvent } from './timeline-view';
 import HospitalSharing from './hospital-sharing';
 import History from './history';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
@@ -33,6 +31,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { useTheme } from 'next-themes';
 import { Badge } from './ui/badge';
 import { AddEventForm } from './add-event-form';
+import { cn } from '@/lib/utils';
 
 
 const navItems = [
@@ -44,41 +43,68 @@ const navItems = [
   { id: 'sharing', label: 'Hospital Sharing', icon: Share2 },
 ];
 
-type NavItem = typeof navItems[number];
+export type NavItem = typeof navItems[number];
+
+function Sidebar({ activeItem, onNavigate }: { activeItem: NavItem, onNavigate: (item: NavItem) => void }) {
+    return (
+        <div className="flex flex-col h-full bg-card p-4 space-y-2">
+             <div className="flex items-center gap-2 mb-6 px-2">
+                <HeartPulse className="h-8 w-8 text-primary" />
+                <h1 className="text-2xl font-bold text-foreground">HealthSync</h1>
+            </div>
+            {navItems.map(item => (
+                <Button
+                    key={item.id}
+                    variant="ghost"
+                    onClick={() => onNavigate(item)}
+                    className={cn(
+                        "w-full justify-start text-base px-4 py-6",
+                        activeItem.id === item.id && "bg-accent text-accent-foreground"
+                    )}
+                >
+                    <item.icon className="mr-3 h-5 w-5" />
+                    {item.label}
+                </Button>
+            ))}
+        </div>
+    );
+}
 
 function DoctorVisits({ events, onAddEvent }: { events: TimelineEvent[], onAddEvent: (event: Omit<TimelineEvent, 'id'> | Omit<TimelineEvent, 'id'>[]) => void }) {
     const visits = events.filter(e => e.type === 'Doctor Visit').sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     return (
         <div className="p-4 md:p-6 space-y-4">
-            <div className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold">Doctor Visits</h2>
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Doctor Visits</h2>
                 <AddEventForm onAddEvent={onAddEvent} defaultEventType="Doctor Visit" hideAgeInput={true}>
                     <Button>Add Visit</Button>
                 </AddEventForm>
             </div>
-            {visits.map(visit => (
-                <Card key={visit.id}>
-                    <CardHeader>
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <CardTitle>{visit.title}</CardTitle>
-                                <CardDescription>{new Date(visit.date).toLocaleDateString()} (Age {visit.age})</CardDescription>
+            <div className="space-y-4">
+                {visits.map(visit => (
+                    <Card key={visit.id}>
+                        <CardHeader>
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <CardTitle>{visit.title}</CardTitle>
+                                    <CardDescription>{new Date(visit.date).toLocaleDateString()} (Age {visit.age})</CardDescription>
+                                </div>
+                                {visit.details?.visitType && <Badge variant={visit.details.visitType === 'Serious Visit' ? 'destructive' : 'secondary'}>{visit.details.visitType}</Badge>}
                             </div>
-                             {visit.details?.visitType && <Badge variant={visit.details.visitType === 'Serious Visit' ? 'destructive' : 'secondary'}>{visit.details.visitType}</Badge>}
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-sm">{visit.description}</p>
-                        {visit.details?.visitType === 'Serious Visit' && (
-                            <div className="mt-4 space-y-2 text-sm border-t pt-4">
-                                {visit.details.diseaseName && <p><span className="font-semibold">Diagnosis:</span> {visit.details.diseaseName}</p>}
-                                {visit.details.medicationsPrescribed && <p><span className="font-semibold">Prescription:</span> {visit.details.medicationsPrescribed}</p>}
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
-            ))}
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-sm">{visit.description}</p>
+                            {visit.details?.visitType === 'Serious Visit' && (
+                                <div className="mt-4 space-y-2 text-sm border-t pt-4">
+                                    {visit.details.diseaseName && <p><span className="font-semibold">Diagnosis:</span> {visit.details.diseaseName}</p>}
+                                    {visit.details.medicationsPrescribed && <p><span className="font-semibold">Prescription:</span> {visit.details.medicationsPrescribed}</p>}
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
         </div>
     );
 }
@@ -88,8 +114,8 @@ function Medication({ events, onAddEvent }: { events: TimelineEvent[], onAddEven
 
     return (
         <div className="p-4 md:p-6 space-y-4">
-            <div className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold">Medication</h2>
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Medication</h2>
                 <AddEventForm onAddEvent={onAddEvent} defaultEventType="Medication" hideAgeInput={true}>
                     <Button>Add Medication</Button>
                 </AddEventForm>
@@ -121,8 +147,8 @@ function Diseases({ events, onAddEvent }: { events: TimelineEvent[], onAddEvent:
 
     return (
         <div className="p-4 md:p-6 space-y-4">
-            <div className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold">Diseases</h2>
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Diseases</h2>
                  <AddEventForm onAddEvent={onAddEvent} defaultEventType="Disease" hideAgeInput={true}>
                     <Button>Add Disease</Button>
                 </AddEventForm>
@@ -175,25 +201,22 @@ function AccountSection({ onNavigate }: { onNavigate: (item: NavItem) => void })
 
     const handleDelete = () => {
       if (!user) return;
-      // This is a simplified example. In a real app, you'd want a more robust way to delete user data.
       Object.keys(localStorage).forEach(key => {
         if (key.startsWith(`healthsync-${user.id}-`)) {
           localStorage.removeItem(key);
         }
       });
-      // Also remove family history which has a different key structure
       localStorage.removeItem(getNamespacedKey('familyHistory', user.id));
       localStorage.removeItem(getNamespacedKey('travelHistory', user.id));
       
       toast({ variant: "destructive", title: "All Data Deleted", description: "All your health data has been permanently deleted."});
-      // We don't reload, logout will redirect
     }
 
     if (!user) return null;
 
     return (
         <div className="p-4 md:p-6">
-             <h2 className="text-xl font-semibold mb-4">Account Information</h2>
+             <h2 className="text-2xl font-bold mb-6">Account Information</h2>
             <Card>
                 <CardHeader>
                     <CardTitle>Your Profile</CardTitle>
@@ -222,7 +245,7 @@ function AccountSection({ onNavigate }: { onNavigate: (item: NavItem) => void })
                             <Input id="weight" value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="e.g., 175 lbs"/>
                         </div>
                     </div>
-                    <div className="flex flex-col sm:flex-row gap-2 pt-2 border-t">
+                    <div className="flex flex-col sm:flex-row gap-2 pt-4 border-t">
                         <Button onClick={handleSave}>Save Changes</Button>
                         <AlertDialog>
                             <AlertDialogTrigger asChild>
@@ -250,36 +273,13 @@ function AccountSection({ onNavigate }: { onNavigate: (item: NavItem) => void })
     );
 }
 
-const AppHeader = ({ activeItem, onNavigate }: { activeItem: NavItem, onNavigate: (item: NavItem) => void }) => {
+const AppHeader = ({ onNavigate }: { onNavigate: (item: NavItem) => void }) => {
     const { user, logout } = useAuth();
     const { setTheme } = useTheme();
 
     return (
-        <header className="flex items-center justify-between p-4 border-b bg-card">
-            <div className="flex items-center gap-4">
-                <HeartPulse className="h-8 w-8 text-primary" />
-                <h1 className="text-xl font-bold text-foreground hidden sm:block">HealthSync</h1>
-            </div>
-
-            <div className="flex items-center gap-2">
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                            <Menu className="h-5 w-5" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Navigate To</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        {navItems.map(item => (
-                             <DropdownMenuItem key={item.id} onClick={() => onNavigate(item)}>
-                                <item.icon className="mr-2 h-4 w-4" />
-                                <span>{item.label}</span>
-                            </DropdownMenuItem>
-                        ))}
-                    </DropdownMenuContent>
-                </DropdownMenu>
-
+        <header className="flex items-center justify-end p-4 border-b bg-background">
+             <div className="flex items-center gap-2">
                  <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                          <Button variant="ghost" size="icon">
@@ -341,7 +341,6 @@ export default function HealthSyncApp() {
       if (storedEvents) {
         setTimelineEvents(JSON.parse(storedEvents));
       } else {
-        // No dummy data
         setTimelineEvents([]);
       }
     } catch (error) {
@@ -383,11 +382,14 @@ export default function HealthSyncApp() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-background text-foreground">
-        <AppHeader activeItem={activeItem} onNavigate={setActiveItem} />
-        <main className="flex-1 overflow-y-auto bg-secondary/50">
-            {renderContent()}
-        </main>
+    <div className="grid grid-cols-[280px_1fr] h-screen bg-background text-foreground">
+        <Sidebar activeItem={activeItem} onNavigate={setActiveItem} />
+        <div className="flex flex-col">
+            <AppHeader onNavigate={setActiveItem} />
+            <main className="flex-1 overflow-y-auto">
+                {renderContent()}
+            </main>
+        </div>
     </div>
   );
 }

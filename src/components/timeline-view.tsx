@@ -1,18 +1,12 @@
 
 'use client';
 
-import React, { useMemo, useState, useEffect } from 'react';
-import { Syringe, Pill, Stethoscope, HeartPulse, PlusCircle, Biohazard, HelpCircle } from 'lucide-react';
+import React, { useMemo } from 'react';
+import { Syringe, Pill, Stethoscope, HeartPulse, Biohazard, HelpCircle } from 'lucide-react';
 import { Button } from './ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from './ui/dialog';
-import { Input } from './ui/input';
-import { Textarea } from './ui/textarea';
-import { Label } from './ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { Badge } from './ui/badge';
-import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { AddEventForm } from './add-event-form';
 
 export const eventIcons = {
@@ -104,20 +98,16 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
   return (
     <div className="p-4 md:p-6 lg:p-8 relative">
         <div className="max-w-4xl mx-auto">
-            <Card>
-                <CardHeader>
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <CardTitle>Your Life Story</CardTitle>
-                            <CardDescription>A chronological record of your health journey, organized by age.</CardDescription>
-                        </div>
-                         <AddEventForm onAddEvent={onAddEvent}>
-                            <Button>Add Event</Button>
-                        </AddEventForm>
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    {sortedAges.length > 0 ? (
+             <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Your Life Story</h2>
+                 <AddEventForm onAddEvent={onAddEvent}>
+                    <Button>Add Event</Button>
+                </AddEventForm>
+            </div>
+            
+            {sortedAges.length > 0 ? (
+                <Card>
+                    <CardContent className="p-0">
                         <Accordion type="single" collapsible className="w-full" defaultValue={`age-${sortedAges[0]}`}>
                             {sortedAges.map(age => {
                                 const ageEvents = eventsByAge[age];
@@ -126,8 +116,8 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                                 }
                                 const eventSummary = ageEvents.map(e => e.type).slice(0, 3).join(', ') + (ageEvents.length > 3 ? '...' : '');
                                 return (
-                                    <AccordionItem value={`age-${age}`} key={age}>
-                                        <AccordionTrigger className="text-xl font-bold">
+                                    <AccordionItem value={`age-${age}`} key={age} className="px-6">
+                                        <AccordionTrigger className="text-xl font-bold hover:no-underline">
                                             <div className="flex justify-between w-full items-center pr-4">
                                                 <span>Age {age}</span>
                                                 <span className="text-sm font-normal text-muted-foreground">{eventSummary}</span>
@@ -144,16 +134,16 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                                 )
                             })}
                         </Accordion>
-                     ) : (
-                        <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm py-12">
-                            <div className="flex flex-col items-center gap-2 text-center">
-                                <h3 className="text-2xl font-bold tracking-tight">No Events Yet</h3>
-                                <p className="text-sm text-muted-foreground">Click the "Add Event" button to add your first health event.</p>
-                            </div>
-                        </div>
-                     )}
-                </CardContent>
-            </Card>
+                    </CardContent>
+                </Card>
+            ) : (
+                <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm py-24">
+                    <div className="flex flex-col items-center gap-2 text-center">
+                        <h3 className="text-2xl font-bold tracking-tight">No Events Yet</h3>
+                        <p className="text-sm text-muted-foreground">Click the "Add Event" button to add your first health event.</p>
+                    </div>
+                </div>
+            )}
         </div>
     </div>
   );
