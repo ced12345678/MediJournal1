@@ -1,13 +1,20 @@
-# Firebase Studio - MediJournal
+# MediJournal: Your Personal Health Story
 
-This is a Next.js starter app called MediJournal. It's a personal health companion that helps you track your medical history.
+MediJournal is a privacy-first personal health companion that empowers users to securely track, manage, and visualize their entire medical journey on their own device.
 
-## Features
+## Key Features for Judges
 
-- **Timeline View**: Visualize your health journey with a chronological timeline of events like diagnoses, vaccinations, and prescriptions. You can add your own events.
-- **AI Family History Analysis**: Engage in an interactive chat with an AI to build your family's medical history. The AI will then provide a summary of potential health risk factors based on the conversation.
-- **Local Storage**: All your data is stored securely in your browser's local storage. No data is sent to a server for storage.
-- **Dark Mode**: Switch between light and dark themes.
+- **Interactive Life Timeline**: A unique, collapsible timeline view that visualizes a user's entire health history, grouped by age, making complex medical histories easy to understand at a glance.
+- **Specialized Health Views**: Dedicated sections for Doctor Visits, Medications, and Diseases, allowing users to quickly access and manage specific types of health information.
+- **AI-Powered Family History Analysis**: An integrated AI chat to help users build a structured family medical history and identify potential hereditary risk factors (Note: AI features are disabled in the demo to manage costs).
+- **Secure PDF Export**: Users can generate a comprehensive, shareable PDF summary of their health record to take to their doctor, ensuring they always have their information when they need it.
+- **100% Client-Side**: A fully featured application that runs entirely in the browser with no backend server dependency.
+
+## Privacy & Data Storage
+
+For this hackathon prototype, **MediJournal uses the browser's local storage exclusively**. This means all data is stored securely on the user's own device, and no personal health information is ever transmitted to a server. This demonstrates our commitment to a privacy-centric architecture.
+
+In a real-world application, this model would be extended to use a secure, HIPAA-compliant database where user data would be stored with robust encryption and anonymization techniques to ensure absolute privacy and security at scale.
 
 ## Getting Started
 
@@ -17,7 +24,7 @@ To get started, run the development server:
 npm run dev
 ```
 
-Open [http://localhost:9002](http://localhost:9002) with your browser to see the result. You can start by exploring the **Timeline View** or the **Family History** sections.
+Open [http://localhost:9002](http://localhost:9002) with your browser to see the result.
 
 ## Deployment
 
