@@ -110,9 +110,7 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                                 <Collapsible 
                                     open={isOpen}
                                     onOpenChange={() => setOpenAge(isOpen ? null : age)}
-                                    className={cn(
-                                        isCenter ? "w-4/5" : "w-[calc(50%-2rem)]"
-                                    )}
+                                    className="w-[calc(50%-2rem)]"
                                 >
                                     <CollapsibleTrigger asChild className="group w-full">
                                          <div className={cn("flex items-center w-full", isCenter && 'justify-center')}>
@@ -124,8 +122,7 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                                                 )}></div>
                                             )}
                                             <div className={cn(
-                                                "flex items-center justify-center bg-secondary text-secondary-foreground border-2 border-border font-bold text-2xl transition-transform duration-300 group-hover:scale-105",
-                                                 "w-[500%] h-[200%]"
+                                                "flex items-center justify-center bg-secondary text-secondary-foreground border-2 border-border rounded-lg font-bold text-2xl w-28 h-20 transition-transform duration-300 group-hover:scale-105"
                                             )}>
                                                 {age}
                                             </div>
