@@ -95,39 +95,37 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                         
                         const isOpen = openAge === age;
                         
-                        // New zig-zag pattern: 3 right, 2 left, 2 right
                         const patternIndex = index % 7;
                         const isLeft = patternIndex >= 3 && patternIndex <= 4;
 
                         return (
-                           <div key={age} className={cn("relative py-8", isLeft ? 'pr-[50%]' : 'pl-[50%]')}>
+                           <div key={age} className={cn(
+                                "relative flex py-8 w-full",
+                                isLeft ? 'justify-start' : 'justify-end'
+                           )}>
                                 <Collapsible 
                                     open={isOpen}
                                     onOpenChange={() => setOpenAge(isOpen ? null : age)}
-                                    className="relative"
+                                    className="w-[calc(50%-2rem)]"
                                 >
-                                    <CollapsibleTrigger asChild className="group">
-                                         <div className={cn(
-                                            "absolute top-1/2 -translate-y-1/2",
-                                            "flex items-center cursor-pointer",
-                                             isLeft ? "right-4 flex-row-reverse" : "left-4 flex-row"
-                                         )}>
+                                    <CollapsibleTrigger asChild className="group w-full">
+                                         <div className="flex items-center w-full">
                                             <div className={cn(
-                                                "flex items-center justify-center bg-secondary text-secondary-foreground border-2 border-border font-bold text-2xl transition-transform duration-300 group-hover:scale-105",
-                                                "w-48 h-20" 
+                                                "flex items-center justify-center bg-secondary text-secondary-foreground border-2 border-border font-bold text-2xl transition-transform duration-300 group-hover:scale-105 w-full h-20",
+                                                isLeft ? "ml-auto" : "mr-auto"
                                             )}>
                                                 {age}
                                             </div>
                                             {/* Connector line from central bar to age box */}
-                                            <div className="w-4 h-0.5 bg-border"></div>
+                                            <div className={cn(
+                                                "w-8 h-0.5 bg-border",
+                                                isLeft ? 'order-first' : ''
+                                            )}></div>
                                         </div>
                                     </CollapsibleTrigger>
                                     
                                     <CollapsibleContent>
-                                        <div className={cn(
-                                            "pt-28", // Space below the age marker
-                                            isLeft ? 'pr-8' : 'pl-8'
-                                        )}>
+                                        <div className="pt-4">
                                             <div className="relative p-6 bg-card rounded-lg border">
                                                 <h3 className="text-lg font-semibold mb-4">Events at Age {age}</h3>
                                                 {ageEvents.map((event) => (
