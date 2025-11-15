@@ -17,6 +17,7 @@ import {
   Settings,
   Menu,
   Syringe,
+  ChevronDown
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import TimelineView from './timeline-view';
@@ -34,11 +35,6 @@ import { useTheme } from 'next-themes';
 import { Badge } from './ui/badge';
 import { AddEventForm } from './add-event-form';
 import { cn } from '@/lib/utils';
-import { RadioGroup, RadioGroupItem } from './ui/radio-group';
-import { Textarea } from './ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { ScrollArea } from './ui/scroll-area';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from './ui/dialog';
 
 const navItems = [
   { id: 'timeline', label: 'Life', icon: Sparkle },
@@ -270,25 +266,28 @@ const AppHeader = ({ onNavigate, activeItem }: { onNavigate: (item: NavItem) => 
                     <HeartPulse className="h-8 w-8 text-primary" />
                     <h1 className="text-2xl font-bold text-foreground">HealthSync</h1>
                 </div>
-                <nav className="hidden md:flex items-center gap-2">
-                    {navItems.map(item => (
-                        <Button
-                            key={item.id}
-                            variant="ghost"
-                            onClick={() => onNavigate(item)}
-                            className={cn(
-                                "text-muted-foreground transition-colors hover:text-foreground",
-                                activeItem.id === item.id && "text-foreground bg-primary/10"
-                            )}
-                        >
-                            <item.icon className="mr-2 h-4 w-4" />
-                            {item.label}
+                
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="hidden md:flex items-center gap-2 text-muted-foreground">
+                            <Menu className="h-5 w-5" />
+                            <span>Sections</span>
+                            <ChevronDown className="h-4 w-4" />
                         </Button>
-                    ))}
-                </nav>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                         {navItems.map(item => (
+                            <DropdownMenuItem key={item.id} onClick={() => onNavigate(item)} className={cn(activeItem.id === item.id && "bg-primary/10")}>
+                                <item.icon className="mr-2 h-4 w-4" />
+                                <span>{item.label}</span>
+                            </DropdownMenuItem>
+                        ))}
+                    </DropdownMenuContent>
+                </DropdownMenu>
+
             </div>
             <div className="flex items-center gap-3">
-                <DropdownMenu>
+                 <DropdownMenu>
                     <DropdownMenuTrigger asChild className="md:hidden">
                         <Button variant="outline" size="icon">
                             <Menu className="h-5 w-5" />
@@ -371,6 +370,12 @@ export default function HealthSyncApp() {
       setTimelineEvents([]);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (timelineEvents.length > 0 && user) {
+        localStorage.setItem(getNamespacedKey('timeline', user.id), JSON.stringify(timelineEvents));
+    }
+  }, [timelineEvents, user]);
 
   const addEvent = (eventOrEvents: Omit<TimelineEvent, 'id'> | Omit<TimelineEvent, 'id'>[]) => {
     if (!user) return;
