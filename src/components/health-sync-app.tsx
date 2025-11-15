@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -6,26 +7,26 @@ import {
   HeartPulse,
   Share2,
   User,
-  PanelLeft,
   Stethoscope,
   Pill,
-  Map,
   Sparkle,
   Biohazard,
   LogOut,
+  ChevronDown,
+  Menu,
+  Settings,
+  Moon,
+  Sun,
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ThemeToggle } from './theme-toggle';
-import TimelineView, { type TimelineEvent, type EventType, eventTypes, initialEvents } from './timeline-view';
+import TimelineView, { type TimelineEvent, type EventType, eventTypes } from './timeline-view';
 import HospitalSharing from './hospital-sharing';
 import History from './history';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Badge } from './ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from './ui/dialog';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
@@ -35,6 +36,8 @@ import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { ScrollArea } from './ui/scroll-area';
 import { useAuth } from '@/hooks/use-auth';
 import { getNamespacedKey } from '@/lib/utils';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuPortal, DropdownMenuSubContent } from './ui/dropdown-menu';
+import { useTheme } from 'next-themes';
 
 
 const navItems = [
@@ -44,7 +47,6 @@ const navItems = [
   { id: 'diseases', label: 'Diseases', icon: Biohazard },
   { id: 'history', label: 'History', icon: Users },
   { id: 'sharing', label: 'Hospital Sharing', icon: Share2 },
-  { id: 'account', label: 'Account', icon: User },
 ];
 
 type NavItem = typeof navItems[number];
@@ -69,12 +71,10 @@ const AddEventForm = ({
     const [type, setType] = useState<EventType>(defaultEventType || 'Other');
     const [open, setOpen] = useState(false);
     
-    // New state for conditional Doctor Visit fields
     const [visitType, setVisitType] = useState<'Casual Visit' | 'Serious Visit' | undefined>();
     const [diseaseName, setDiseaseName] = useState('');
     const [medicationsPrescribed, setMedicationsPrescribed] = useState('');
     
-    // New state for Disease medication
     const [medicationForDisease, setMedicationForDisease] = useState('');
 
      useEffect(() => {
@@ -89,7 +89,6 @@ const AddEventForm = ({
         }
     }, [open, defaultEventType, user]);
     
-    // Reset conditional fields when type changes
     useEffect(() => {
         if (type !== 'Doctor Visit') {
             setVisitType(undefined);
@@ -288,6 +287,12 @@ function DoctorVisits({ events, onAddEvent }: { events: TimelineEvent[], onAddEv
 
     return (
         <div className="p-4 md:p-6 space-y-4">
+            <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold">Doctor Visits</h2>
+                <AddEventForm onAddEvent={onAddEvent} defaultEventType="Doctor Visit" hideAgeInput={true}>
+                    <Button>Add Visit</Button>
+                </AddEventForm>
+            </div>
             {visits.map(visit => (
                 <Card key={visit.id}>
                     <CardHeader>
@@ -310,11 +315,6 @@ function DoctorVisits({ events, onAddEvent }: { events: TimelineEvent[], onAddEv
                     </CardContent>
                 </Card>
             ))}
-            <div className="flex justify-end">
-                <AddEventForm onAddEvent={onAddEvent} defaultEventType="Doctor Visit" hideAgeInput={true}>
-                    <Button>Add Visit</Button>
-                </AddEventForm>
-            </div>
         </div>
     );
 }
@@ -324,6 +324,12 @@ function Medication({ events, onAddEvent }: { events: TimelineEvent[], onAddEven
 
     return (
         <div className="p-4 md:p-6 space-y-4">
+            <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold">Medication</h2>
+                <AddEventForm onAddEvent={onAddEvent} defaultEventType="Medication" hideAgeInput={true}>
+                    <Button>Add Medication</Button>
+                </AddEventForm>
+            </div>
             {medications.map(med => (
                 <Card key={med.id}>
                     <CardHeader>
@@ -342,11 +348,6 @@ function Medication({ events, onAddEvent }: { events: TimelineEvent[], onAddEven
                     </CardContent>
                 </Card>
             ))}
-            <div className="flex justify-end">
-                 <AddEventForm onAddEvent={onAddEvent} defaultEventType="Medication" hideAgeInput={true}>
-                    <Button>Add Medication</Button>
-                </AddEventForm>
-            </div>
         </div>
     );
 }
@@ -356,6 +357,12 @@ function Diseases({ events, onAddEvent }: { events: TimelineEvent[], onAddEvent:
 
     return (
         <div className="p-4 md:p-6 space-y-4">
+            <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold">Diseases</h2>
+                 <AddEventForm onAddEvent={onAddEvent} defaultEventType="Disease" hideAgeInput={true}>
+                    <Button>Add Disease</Button>
+                </AddEventForm>
+            </div>
             {diseases.map(disease => (
                 <Card key={disease.id}>
                     <CardHeader>
@@ -367,16 +374,11 @@ function Diseases({ events, onAddEvent }: { events: TimelineEvent[], onAddEvent:
                     </CardContent>
                 </Card>
             ))}
-            <div className="flex justify-end">
-                <AddEventForm onAddEvent={onAddEvent} defaultEventType="Disease" hideAgeInput={true}>
-                    <Button>Add Disease</Button>
-                </AddEventForm>
-            </div>
         </div>
     );
 }
 
-function AccountSection() {
+function AccountSection({ onNavigate }: { onNavigate: (item: NavItem) => void }) {
     const { user, logout } = useAuth();
     const { toast } = useToast();
     
@@ -427,10 +429,11 @@ function AccountSection() {
 
     return (
         <div className="p-4 md:p-6">
+             <h2 className="text-xl font-semibold mb-4">Account Information</h2>
             <Card>
                 <CardHeader>
-                    <CardTitle>Account Information</CardTitle>
-                    <CardDescription>Manage your account settings and actions. All your data is stored locally in this browser.</CardDescription>
+                    <CardTitle>Your Profile</CardTitle>
+                    <CardDescription>Manage your account settings. All your data is stored locally in this browser.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-2">
@@ -457,10 +460,6 @@ function AccountSection() {
                     </div>
                     <div className="flex flex-col sm:flex-row gap-2 pt-2 border-t">
                         <Button onClick={handleSave}>Save Changes</Button>
-                        <Button variant="outline" onClick={logout}>
-                            <LogOut className="mr-2 h-4 w-4" />
-                            Log Out
-                        </Button>
                         <AlertDialog>
                             <AlertDialogTrigger asChild>
                                 <Button variant="destructive">Delete All Data</Button>
@@ -487,44 +486,90 @@ function AccountSection() {
     );
 }
 
-const NavContent = ({
-  activeItem,
-  setActiveItem,
-  closeSheet,
-}: {
-  activeItem: NavItem;
-  setActiveItem: (item: NavItem) => void;
-  closeSheet?: () => void;
-}) => (
-  <>
-    <div className="flex items-center gap-2 px-4 py-3 border-b">
-      <HeartPulse className="h-8 w-8 text-primary" />
-      <h1 className="text-2xl font-bold text-foreground">HealthSync</h1>
-    </div>
-    <nav className="flex-1 space-y-2 p-4">
-      {navItems.map((item) => (
-        <Button
-          key={item.id}
-          variant={activeItem.id === item.id ? 'secondary' : 'ghost'}
-          className="w-full justify-start gap-3"
-          onClick={() => {
-            setActiveItem(item);
-            closeSheet?.();
-          }}
-        >
-          <item.icon className="h-5 w-5" />
-          {item.label}
-        </Button>
-      ))}
-    </nav>
-  </>
-);
+const AppHeader = ({ activeItem, onNavigate }: { activeItem: NavItem, onNavigate: (item: NavItem) => void }) => {
+    const { user, logout } = useAuth();
+    const { setTheme } = useTheme();
+
+    return (
+        <header className="flex items-center justify-between p-4 border-b bg-card">
+            <div className="flex items-center gap-4">
+                <HeartPulse className="h-8 w-8 text-primary" />
+                <h1 className="text-xl font-bold text-foreground hidden sm:block">HealthSync</h1>
+
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="outline">
+                            <Menu className="h-5 w-5 sm:mr-2" />
+                            <span className="hidden sm:inline">Sections</span>
+                            <ChevronDown className="h-4 w-4 ml-2" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuLabel>Navigate To</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {navItems.map(item => (
+                             <DropdownMenuItem key={item.id} onClick={() => onNavigate(item)}>
+                                <item.icon className="mr-2 h-4 w-4" />
+                                <span>{item.label}</span>
+                            </DropdownMenuItem>
+                        ))}
+                    </DropdownMenuContent>
+                </DropdownMenu>
+
+            </div>
+
+            <div className="flex items-center gap-2">
+                 <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                         <Button variant="ghost" size="icon">
+                            <User className="h-5 w-5" />
+                         </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                         <DropdownMenuLabel>
+                            {user?.name || 'My Account'}
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => onNavigate({id: 'account', label: 'Account', icon: User})}>
+                            <Settings className="mr-2 h-4 w-4" />
+                            <span>Account Settings</span>
+                        </DropdownMenuItem>
+                         <DropdownMenuSub>
+                            <DropdownMenuSubTrigger>
+                                <Sun className="h-4 w-4 mr-2 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                                <Moon className="absolute h-4 w-4 mr-2 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                                <span>Toggle Theme</span>
+                            </DropdownMenuSubTrigger>
+                            <DropdownMenuPortal>
+                                <DropdownMenuSubContent>
+                                <DropdownMenuItem onClick={() => setTheme("light")}>
+                                    Light
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setTheme("dark")}>
+                                    Dark
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setTheme("system")}>
+                                    System
+                                </DropdownMenuItem>
+                                </DropdownMenuSubContent>
+                            </DropdownMenuPortal>
+                        </DropdownMenuSub>
+                        <DropdownMenuSeparator />
+                         <DropdownMenuItem onClick={logout}>
+                           <LogOut className="mr-2 h-4 w-4" />
+                           <span>Log out</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+        </header>
+    );
+};
+
 
 export default function HealthSyncApp() {
   const { user } = useAuth();
   const [activeItem, setActiveItem] = useState<NavItem>(navItems[0]);
-  const isMobile = useIsMobile();
-  const [sheetOpen, setSheetOpen] = useState(false);
   const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
 
   useEffect(() => {
@@ -535,12 +580,12 @@ export default function HealthSyncApp() {
       if (storedEvents) {
         setTimelineEvents(JSON.parse(storedEvents));
       } else {
-        setTimelineEvents(initialEvents);
-        localStorage.setItem(key, JSON.stringify(initialEvents));
+        localStorage.setItem(key, JSON.stringify([]));
+        setTimelineEvents([]);
       }
     } catch (error) {
       console.error("Failed to parse timeline events from localStorage", error);
-      setTimelineEvents(initialEvents);
+      setTimelineEvents([]);
     }
   }, [user]);
 
@@ -568,59 +613,20 @@ export default function HealthSyncApp() {
       case 'history':
         return <History />;
       case 'account':
-        return <AccountSection />;
+        return <AccountSection onNavigate={setActiveItem} />;
       case 'sharing':
         return <HospitalSharing />;
+      default:
+        return <TimelineView events={timelineEvents} onAddEvent={addEvent} />;
     }
   };
 
-  if (isMobile === undefined) {
-    return null; // or a loading spinner
-  }
-
-  if (isMobile) {
-    return (
-      <div className="flex flex-col h-screen bg-background">
-        <header className="flex items-center justify-between p-2 border-b">
-          <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <PanelLeft className="h-6 w-6" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="p-0 w-[80%] flex flex-col">
-              <NavContent activeItem={activeItem} setActiveItem={setActiveItem} closeSheet={() => setSheetOpen(false)} />
-            </SheetContent>
-          </Sheet>
-          <span className="text-lg font-semibold">{activeItem.label}</span>
-          <ThemeToggle />
-        </header>
-        <main className="flex-1 overflow-y-auto bg-secondary/50">{renderContent()}</main>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex h-screen bg-background text-foreground">
-      <aside className="w-64 flex flex-col border-r bg-card">
-        <NavContent activeItem={activeItem} setActiveItem={setActiveItem} />
-        <div className="p-4 border-t">
-            <ThemeToggle />
-        </div>
-      </aside>
-      <div className="flex flex-1 flex-col">
-        <header className="flex items-center justify-between p-4 border-b">
-            <h2 className="text-xl font-semibold">{activeItem.label}</h2>
-        </header>
+    <div className="flex flex-col h-screen bg-background text-foreground">
+        <AppHeader activeItem={activeItem} onNavigate={setActiveItem} />
         <main className="flex-1 overflow-y-auto bg-secondary/50">
             {renderContent()}
-             {activeItem.id === 'timeline' && (
-              <div className="p-4 md:p-6 flex justify-end">
-                <AddEventForm onAddEvent={addEvent}><Button>Add Event</Button></AddEventForm>
-              </div>
-            )}
         </main>
-      </div>
     </div>
   );
 }

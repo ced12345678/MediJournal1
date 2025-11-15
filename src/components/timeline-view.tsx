@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useMemo, useState, useEffect } from 'react';
@@ -12,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { Badge } from './ui/badge';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
+import { AddEventForm } from './health-sync-app';
 
 export const eventIcons = {
   Vaccination: Syringe,
@@ -39,7 +41,6 @@ export type TimelineEvent = {
   }
 };
 
-export const initialEvents: TimelineEvent[] = [];
 
 const TimelineItem = ({ event, isLast }: { event: TimelineEvent; isLast: boolean }) => {
   const Icon = eventIcons[event.type] || HelpCircle;
@@ -105,8 +106,15 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
         <div className="max-w-4xl mx-auto">
             <Card>
                 <CardHeader>
-                    <CardTitle>Your Life Story</CardTitle>
-                    <CardDescription>A chronological record of your health journey, organized by age.</CardDescription>
+                    <div className="flex justify-between items-center">
+                        <div>
+                            <CardTitle>Your Life Story</CardTitle>
+                            <CardDescription>A chronological record of your health journey, organized by age.</CardDescription>
+                        </div>
+                         <AddEventForm onAddEvent={onAddEvent}>
+                            <Button>Add Event</Button>
+                        </AddEventForm>
+                    </div>
                 </CardHeader>
                 <CardContent>
                     {sortedAges.length > 0 ? (
@@ -140,7 +148,7 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                         <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm py-12">
                             <div className="flex flex-col items-center gap-2 text-center">
                                 <h3 className="text-2xl font-bold tracking-tight">No Events Yet</h3>
-                                <p className="text-sm text-muted-foreground">Click the plus button to add your first health event.</p>
+                                <p className="text-sm text-muted-foreground">Click the "Add Event" button to add your first health event.</p>
                             </div>
                         </div>
                      )}
@@ -150,3 +158,5 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
     </div>
   );
 }
+
+    
