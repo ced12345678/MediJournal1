@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Trash2 } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
+import HealthTipsGenerator from './health-tips-generator';
 
 
 type TravelRecord = {
@@ -213,8 +214,11 @@ function FamilyHistory() {
 export default function History() {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-           <FamilyHistory />
-           <TravelHistory />
+           <div className="space-y-8">
+             <FamilyHistory />
+             <TravelHistory />
+           </div>
+           <HealthTipsGenerator />
         </div>
     )
 }
