@@ -259,16 +259,16 @@ const AppHeader = ({ activeItem, onNavigate }: { activeItem: NavItem, onNavigate
             <div className="flex items-center gap-4">
                 <HeartPulse className="h-8 w-8 text-primary" />
                 <h1 className="text-xl font-bold text-foreground hidden sm:block">HealthSync</h1>
+            </div>
 
+            <div className="flex items-center gap-2">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="outline">
-                            <Menu className="h-5 w-5 sm:mr-2" />
-                            <span className="hidden sm:inline">Sections</span>
-                            <ChevronDown className="h-4 w-4 ml-2" />
+                        <Button variant="ghost" size="icon">
+                            <Menu className="h-5 w-5" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent>
+                    <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Navigate To</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         {navItems.map(item => (
@@ -280,9 +280,6 @@ const AppHeader = ({ activeItem, onNavigate }: { activeItem: NavItem, onNavigate
                     </DropdownMenuContent>
                 </DropdownMenu>
 
-            </div>
-
-            <div className="flex items-center gap-2">
                  <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                          <Button variant="ghost" size="icon">
@@ -344,7 +341,7 @@ export default function HealthSyncApp() {
       if (storedEvents) {
         setTimelineEvents(JSON.parse(storedEvents));
       } else {
-        localStorage.setItem(key, JSON.stringify([]));
+        // No dummy data
         setTimelineEvents([]);
       }
     } catch (error) {
