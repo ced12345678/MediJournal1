@@ -116,15 +116,22 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                                     onOpenChange={() => setOpenAge(isOpen ? null : age)}
                                     className="w-full"
                                 >
-                                    <div className="relative h-20 w-full flex items-center">
+                                    <div className="relative h-20 w-full flex items-center justify-center">
                                         <CollapsibleTrigger asChild className="group w-full">
-                                            <div className="flex items-center">
+                                           <div
+                                                className={cn(
+                                                    'relative w-full flex',
+                                                    position === 'left' && 'justify-start',
+                                                    position === 'center' && 'justify-center',
+                                                    position === 'right' && 'justify-end'
+                                                )}
+                                            >
                                                 {position === 'left' && (
-                                                    <div className="flex items-center justify-end w-1/2 pr-4">
-                                                         <div className={cn("flex items-center justify-center font-bold text-2xl h-20 w-48 transition-all duration-300 hover:scale-105 border-4", color.bg, color.border)}>
+                                                    <div className="w-1/2 flex items-center justify-end pr-4">
+                                                        <div className={cn("flex items-center justify-center font-bold text-2xl h-20 w-48 transition-all duration-300 hover:scale-105 border-4", color.bg, color.border)}>
                                                             {age}
                                                         </div>
-                                                        <div className="w-20 h-0.5 bg-border" />
+                                                        <div className="w-full h-0.5 bg-border" />
                                                     </div>
                                                 )}
                                                 {position === 'center' && (
@@ -135,15 +142,12 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                                                     </div>
                                                 )}
                                                 {position === 'right' && (
-                                                    <>
-                                                        <div className="w-1/2" />
-                                                        <div className="flex items-center justify-start w-1/2 pl-4">
-                                                            <div className="w-20 h-0.5 bg-border" />
-                                                            <div className={cn("flex items-center justify-center font-bold text-2xl h-20 w-48 transition-all duration-300 hover:scale-105 border-4", color.bg, color.border)}>
-                                                                {age}
-                                                            </div>
+                                                    <div className="w-1/2 flex items-center justify-start pl-4">
+                                                        <div className="w-full h-0.5 bg-border" />
+                                                         <div className={cn("flex items-center justify-center font-bold text-2xl h-20 w-48 transition-all duration-300 hover:scale-105 border-4", color.bg, color.border)}>
+                                                            {age}
                                                         </div>
-                                                    </>
+                                                    </div>
                                                 )}
                                             </div>
                                         </CollapsibleTrigger>
@@ -154,7 +158,12 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                                             'relative w-full flex pt-4'
                                         )}
                                     >
-                                        <div className="w-full flex items-start">
+                                        <div className={cn(
+                                            "w-full flex",
+                                            position === 'left' && 'justify-start',
+                                            position === 'center' && 'justify-center',
+                                            position === 'right' && 'justify-end'
+                                        )}>
                                             {position === 'left' && (
                                                 <div className="w-1/2 flex justify-end pr-4">
                                                     <div className={cn('relative p-6 bg-card rounded-lg border w-[320px] max-h-96 overflow-y-auto')}>
@@ -176,18 +185,15 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                                                 </div>
                                             )}
                                              {position === 'right' && (
-                                                 <>
-                                                    <div className="w-1/2" />
-                                                    <div className="w-1/2 flex justify-start pl-4">
-                                                        <div className={cn('relative p-6 bg-card rounded-lg border w-[320px] max-h-96 overflow-y-auto')}>
-                                                            <h3 className="text-lg font-semibold mb-4">Events at Age {age}</h3>
-                                                            {ageEvents.map((event) => (
-                                                                <TimelineItem key={event.id} event={event} />
-                                                            ))}
-                                                        </div>
+                                                 <div className="w-1/2 flex justify-start pl-4">
+                                                    <div className={cn('relative p-6 bg-card rounded-lg border w-[320px] max-h-96 overflow-y-auto')}>
+                                                        <h3 className="text-lg font-semibold mb-4">Events at Age {age}</h3>
+                                                        {ageEvents.map((event) => (
+                                                            <TimelineItem key={event.id} event={event} />
+                                                        ))}
                                                     </div>
-                                                 </>
-                                            )}
+                                                </div>
+                                             )}
                                         </div>
                                     </CollapsibleContent>
                                 </Collapsible>
@@ -207,6 +213,7 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
     </div>
   );
 }
+
 
 
 
