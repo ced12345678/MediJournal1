@@ -71,11 +71,11 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
   }, [eventsByAge]);
 
   const colors = [
-      { bg: 'bg-chart-1/80', border: 'border-chart-1' },
-      { bg: 'bg-chart-2/80', border: 'border-chart-2' },
-      { bg: 'bg-chart-3/80', border: 'border-chart-3' },
-      { bg: 'bg-chart-4/80', border: 'border-chart-4' },
-      { bg: 'bg-chart-5/80', border: 'border-chart-5' },
+    { bg: 'bg-chart-1/80', border: 'border-chart-1' },
+    { bg: 'bg-chart-2/80', border: 'border-chart-2' },
+    { bg: 'bg-chart-3/80', border: 'border-chart-3' },
+    { bg: 'bg-chart-4/80', border: 'border-chart-4' },
+    { bg: 'bg-chart-5/80', border: 'border-chart-5' },
   ];
 
   return (
@@ -120,11 +120,11 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                                         <CollapsibleTrigger asChild className="group w-full">
                                             <div className="flex items-center">
                                                 {position === 'left' && (
-                                                    <div className="flex items-center justify-end w-1/2">
-                                                         <div className={cn("flex items-center justify-center font-bold text-2xl h-20 w-48 transition-all duration-300 hover:scale-105 border-4 mr-4", color.bg, color.border)}>
+                                                    <div className="flex items-center justify-end w-1/2 pr-4">
+                                                         <div className={cn("flex items-center justify-center font-bold text-2xl h-20 w-48 transition-all duration-300 hover:scale-105 border-4", color.bg, color.border)}>
                                                             {age}
                                                         </div>
-                                                        <div className="w-8 h-0.5 bg-border" />
+                                                        <div className="w-20 h-0.5 bg-border" />
                                                     </div>
                                                 )}
                                                 {position === 'center' && (
@@ -137,9 +137,9 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                                                 {position === 'right' && (
                                                     <>
                                                         <div className="w-1/2" />
-                                                        <div className="flex items-center justify-start w-1/2">
-                                                            <div className="w-8 h-0.5 bg-border" />
-                                                            <div className={cn("flex items-center justify-center font-bold text-2xl h-20 w-48 transition-all duration-300 hover:scale-105 border-4 ml-4", color.bg, color.border)}>
+                                                        <div className="flex items-center justify-start w-1/2 pl-4">
+                                                            <div className="w-20 h-0.5 bg-border" />
+                                                            <div className={cn("flex items-center justify-center font-bold text-2xl h-20 w-48 transition-all duration-300 hover:scale-105 border-4", color.bg, color.border)}>
                                                                 {age}
                                                             </div>
                                                         </div>
@@ -154,10 +154,10 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                                             'relative w-full flex pt-4'
                                         )}
                                     >
-                                        <div className="w-full flex items-center">
+                                        <div className="w-full flex items-start">
                                             {position === 'left' && (
-                                                <div className="w-1/2 flex justify-end">
-                                                    <div className={cn('relative p-6 bg-card rounded-lg border w-[320px] max-h-96 overflow-y-auto mr-4')}>
+                                                <div className="w-1/2 flex justify-end pr-4">
+                                                    <div className={cn('relative p-6 bg-card rounded-lg border w-[320px] max-h-96 overflow-y-auto')}>
                                                         <h3 className="text-lg font-semibold mb-4">Events at Age {age}</h3>
                                                         {ageEvents.map((event) => (
                                                             <TimelineItem key={event.id} event={event} />
@@ -178,8 +178,8 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                                              {position === 'right' && (
                                                  <>
                                                     <div className="w-1/2" />
-                                                    <div className="w-1/2 flex justify-start">
-                                                        <div className={cn('relative p-6 bg-card rounded-lg border w-[320px] max-h-96 overflow-y-auto ml-4')}>
+                                                    <div className="w-1/2 flex justify-start pl-4">
+                                                        <div className={cn('relative p-6 bg-card rounded-lg border w-[320px] max-h-96 overflow-y-auto')}>
                                                             <h3 className="text-lg font-semibold mb-4">Events at Age {age}</h3>
                                                             {ageEvents.map((event) => (
                                                                 <TimelineItem key={event.id} event={event} />
@@ -207,5 +207,6 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
     </div>
   );
 }
+
 
 
