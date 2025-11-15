@@ -110,42 +110,39 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                         const color = colors[index % colors.length];
 
                         return (
-                           <div key={age} className="relative w-full">
+                           <div key={age} className="relative">
                                 <Collapsible 
                                     open={isOpen}
                                     onOpenChange={() => setOpenAge(isOpen ? null : age)}
                                     className="w-full"
                                 >
-                                    <div className="relative h-20 w-full flex items-center justify-center">
+                                    <div className="relative flex justify-center items-center h-20 w-full">
                                         <CollapsibleTrigger asChild className="group w-full">
-                                           <div
-                                                className={cn(
-                                                    'absolute top-1/2 -translate-y-1/2 flex items-center',
-                                                    position === 'left' && 'left-1/4 -translate-x-full',
-                                                    position === 'center' && 'left-1/2 -translate-x-1/2',
-                                                    position === 'right' && 'left-3/4'
-                                                )}
-                                            >
+                                            <div className='w-full'>
                                                 {position === 'left' && (
-                                                    <>
+                                                    <div className='w-1/2 flex justify-end items-center pr-2'>
                                                         <div className={cn("flex items-center justify-center font-bold text-2xl h-20 w-48 transition-all duration-300 hover:scale-105 border-4", color.bg, color.border)}>
                                                             {age}
                                                         </div>
-                                                        <div className="w-16 h-0.5 bg-border" />
-                                                    </>
+                                                        <div className="w-1/4 h-0.5 bg-border" />
+                                                    </div>
                                                 )}
                                                 {position === 'center' && (
-                                                    <div className={cn("flex items-center justify-center font-bold text-2xl h-20 w-48 transition-all duration-300 hover:scale-105 border-4", color.bg, color.border)}>
-                                                        {age}
+                                                    <div className='flex justify-center'>
+                                                        <div className={cn("flex items-center justify-center font-bold text-2xl h-20 w-48 transition-all duration-300 hover:scale-105 border-4", color.bg, color.border)}>
+                                                            {age}
+                                                        </div>
                                                     </div>
                                                 )}
                                                 {position === 'right' && (
-                                                     <>
-                                                        <div className="w-16 h-0.5 bg-border" />
-                                                        <div className={cn("flex items-center justify-center font-bold text-2xl h-20 w-48 transition-all duration-300 hover:scale-105 border-4", color.bg, color.border)}>
-                                                            {age}
+                                                     <div className='w-full flex justify-end'>
+                                                        <div className='w-1/2 flex items-center pl-2'>
+                                                            <div className="w-1/4 h-0.5 bg-border" />
+                                                            <div className={cn("flex items-center justify-center font-bold text-2xl h-20 w-48 transition-all duration-300 hover:scale-105 border-4", color.bg, color.border)}>
+                                                                {age}
+                                                            </div>
                                                         </div>
-                                                    </>
+                                                     </div>
                                                 )}
                                             </div>
                                         </CollapsibleTrigger>
@@ -161,8 +158,9 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                                             position === 'right' && 'justify-end'
                                         )}>
                                              <div className={cn('relative p-6 bg-card rounded-lg border w-[320px] max-h-96 overflow-y-auto',
-                                                position === 'left' && 'ml-[calc(25%-320px)]',
-                                                position === 'right' && 'mr-[calc(25%-320px)]',
+                                                position === 'left' && 'ml-[calc(25%-160px)]', // 25% mark minus half the box width
+                                                position === 'center' && 'mx-auto',
+                                                position === 'right' && 'mr-[calc(25%-160px)]', // 25% from right edge minus half the box width
                                              )}>
                                                 <h3 className="text-lg font-semibold mb-4">Events at Age {age}</h3>
                                                 {ageEvents.map((event) => (
