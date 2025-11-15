@@ -30,23 +30,26 @@ In a real-world application, this model would evolve to use a secure, HIPAA-comp
 
 This "zero-knowledge" architecture means that even we, the creators of MediJournal, could not access or read our users' sensitive health information. This approach ensures absolute privacy and security at scale.
 
-## Business Model: The Sponsored Wellness Platform (B2B2C)
+## Business Model: The Sponsored Wellness Platform
 
-Instead of charging users or selling their data, MediJournal's business model is to be offered as a premium wellness platform sponsored by larger organizations for their members. This approach keeps the app free for the end-user, maximizing adoption while creating a strong B2B revenue stream.
+Instead of charging users directly, this model focuses on a Business-to-Business-to-Consumer (B2B2C) strategy where organizations sponsor MediJournal for their members. This keeps the app free for the end-user, maximizing adoption and aligning with our privacy-first mission.
 
-### Target Customers (The Sponsors)
-*   **Corporate Employers:** As part of their corporate wellness programs. A healthier, more proactive workforce leads to higher productivity and lower insurance costs.
-*   **Health Insurance Providers:** To improve member engagement and preventative care, which leads to better health outcomes and reduced long-term claims costs.
-*   **Healthcare Systems:** To provide to patients as a tool for improving patient engagement and making doctor's visits more efficient.
+### Primary Target Customers (The Sponsors)
+
+*   **Corporate Employers:** Companies invest heavily in corporate wellness to increase productivity and reduce health insurance premiums. MediJournal is a high-value benefit that empowers employees to manage their health proactively.
+*   **Health Insurance Providers & Hospitals:** These institutions benefit from a more engaged patient population. An organized health record leads to better preventative care, more efficient consultations, and improved health outcomes, ultimately lowering costs.
 
 ### The Value Proposition
-*   **For the User (The Member/Employee):** A powerful, private, and free tool to manage their health journey, including premium AI-driven features.
-*   **For the Sponsor (The Organization):** A cost-effective way to promote health and wellness, leading to a healthier population and a clear return on investment through increased productivity and reduced healthcare costs.
 
-### How Privacy is Guaranteed
-This model's success hinges on maintaining absolute user privacy.
+Sponsors pay a subscription fee (e.g., per member, per month) to provide their population with free access to "MediJournal Plus" and all its premium features. The sponsor's value comes from a healthier, more proactive user base.
 
-1.  **No Data Sharing:** The sponsoring organization **never** has access to any individual's personal health data. The zero-knowledge architecture makes this technically impossible.
-2.  **Anonymous Usage Reports:** Sponsors would receive completely anonymous, high-level aggregate reports to demonstrate the value and engagement of the program (e.g., "75% of enrolled employees have created a health profile" or "The travel health advisor was used 500 times this quarter"). These reports confirm the tool is being used without revealing any personal information.
+Critically, the sponsoring organization **never** gets access to any individual's personal health data. Their ROI is measured in engagement metrics and the long-term benefits of improved population health, not surveillance. This model maintains perfect alignment between user privacy and business success.
 
-This B2B2C model creates a win-win-win scenario: users get a free, best-in-class health app; sponsors achieve their wellness and cost-saving goals; and MediJournal generates revenue by providing a valuable service, not by monetizing data.
+### Tier for Corporations and Hospitals
+
+We will offer a specialized "MediJournal for Enterprise" tier. This allows organizations to sponsor "MediJournal Plus" for their employees or patients as a premium health benefit. This model provides:
+
+*   **For Corporations:** A powerful tool to boost employee wellness, productivity, and potentially reduce group health insurance costs.
+*   **For Hospitals & Insurers:** A platform to drive patient engagement, improve health outcomes, and enable more efficient care by providing doctors with well-organized patient data.
+
+Sponsoring organizations would **never** have access to individual health data, receiving only anonymized, high-level adoption and usage metrics.
