@@ -3,6 +3,7 @@
 import { z } from 'zod';
 import { generateHealthTips } from '@/ai/flows/generate-health-tips';
 import type { GenerateHealthTipsOutput } from '@/ai/flows/generate-health-tips';
+import '@/ai/flows/generate-health-tips';
 
 
 // AI-related imports are commented out or removed
