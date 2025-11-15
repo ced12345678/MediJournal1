@@ -116,43 +116,57 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                                 onOpenChange={() => setOpenAge(isOpen ? null : age)}
                                 className="relative my-8"
                            >
-                            <div className={cn("w-full h-20",
-                                position === 'left' && 'pr-4',
-                                position === 'right' && 'pl-4',
-                            )}>
-                                <div className={cn("w-1/2 h-full flex items-center",
-                                    position === 'left' && 'float-left justify-end',
-                                    position === 'center' && 'mx-auto justify-center',
-                                    position === 'right' && 'float-right justify-start'
-                                )}>
-                                    <CollapsibleTrigger asChild className="group">
-                                        <div className="flex items-center">
-                                            {position === 'left' && <div className="h-0.5 bg-border w-10"></div>}
-                                            <div className={cn("flex items-center justify-center font-bold text-2xl h-20 w-48 transition-all duration-300 hover:scale-105 border-4", color.bg, color.border)}>
-                                                {age}
-                                            </div>
-                                            {position === 'right' && <div className="h-0.5 bg-border w-10"></div>}
+                            <div className="flex">
+                                {position === 'left' && (
+                                    <div className={cn("w-1/2 flex items-center justify-end")}>
+                                        <div className={cn("flex items-center")}>
+                                            <CollapsibleTrigger asChild className="group">
+                                                <div className={cn("flex items-center justify-center font-bold text-2xl h-20 w-48 transition-all duration-300 hover:scale-105 border-4", color.bg, color.border)}>
+                                                    {age}
+                                                </div>
+                                            </CollapsibleTrigger>
+                                            <div className="h-0.5 bg-border w-16"></div>
                                         </div>
-                                    </CollapsibleTrigger>
-                                </div>
+                                    </div>
+                                )}
+                                {position === 'center' && (
+                                     <div className="w-full flex justify-center">
+                                        <div className="flex items-center">
+                                            <CollapsibleTrigger asChild className="group">
+                                                <div className={cn("flex items-center justify-center font-bold text-2xl h-20 w-48 transition-all duration-300 hover:scale-105 border-4", color.bg, color.border)}>
+                                                    {age}
+                                                </div>
+                                            </CollapsibleTrigger>
+                                        </div>
+                                    </div>
+                                )}
+                                 {position === 'right' && (
+                                    <>
+                                        <div className="w-1/2" />
+                                        <div className={cn("w-1/2 flex items-center justify-start")}>
+                                            <div className={cn("flex items-center")}>
+                                                <div className="h-0.5 bg-border w-16"></div>
+                                                <CollapsibleTrigger asChild className="group">
+                                                    <div className={cn("flex items-center justify-center font-bold text-2xl h-20 w-48 transition-all duration-300 hover:scale-105 border-4", color.bg, color.border)}>
+                                                        {age}
+                                                    </div>
+                                                </CollapsibleTrigger>
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                                 <CollapsibleContent>
-                                     <div className={cn("w-full flex",
-                                         position === 'left' && 'pr-4 justify-start',
+                                     <div className={cn("w-full flex mt-4",
+                                         position === 'left' && 'justify-end pr-[7.5rem]',
                                          position === 'center' && 'justify-center',
-                                         position === 'right' && 'pl-4 justify-end'
+                                         position === 'right' && 'justify-start pl-[7.5rem]'
                                     )}>
-                                        <div className={cn("flex w-1/2", 
-                                            position === 'left' && 'justify-end',
-                                            position === 'center' && 'justify-center',
-                                            position === 'right' && 'justify-start'
-                                        )}>
-                                             <div className='relative p-6 bg-card rounded-lg border w-[320px] max-h-96 overflow-y-auto'>
-                                                <h3 className="text-lg font-semibold mb-4">Events at Age {age}</h3>
-                                                {ageEvents.map((event) => (
-                                                    <TimelineItem key={event.id} event={event} />
-                                                ))}
-                                            </div>
+                                         <div className='relative p-6 bg-card rounded-lg border w-[320px] max-h-96 overflow-y-auto'>
+                                            <h3 className="text-lg font-semibold mb-4">Events at Age {age}</h3>
+                                            {ageEvents.map((event) => (
+                                                <TimelineItem key={event.id} event={event} />
+                                            ))}
                                         </div>
                                     </div>
                                 </CollapsibleContent>
