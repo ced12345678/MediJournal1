@@ -99,12 +99,7 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                         const isLeft = positionIndex === 0;
                         const isCenter = positionIndex === 1;
                         const isRight = positionIndex === 2;
-
-                        let currentPosition: 'left' | 'center' | 'right' = 'center';
-                        if (isLeft) currentPosition = 'left';
-                        if (isCenter) currentPosition = 'center';
-                        if (isRight) currentPosition = 'right';
-
+                        
                         return (
                            <div key={age} className={cn("relative w-full py-8")}>
                                 <Collapsible 
@@ -115,20 +110,20 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                                     <div className={cn("flex w-full items-center", {
                                          'justify-start': isLeft,
                                          'justify-center': isCenter,
-                                         'justify-end': isRight
+                                         'justify-end': isRight,
                                     })}>
                                        <div className={cn("w-1/2 flex", {
                                             'justify-end': isLeft,
                                             'justify-center': isCenter,
-                                            'justify-start': isRight
+                                            'justify-start': isRight,
                                        })}>
                                             <CollapsibleTrigger asChild className="group w-auto">
                                                 <div className="flex items-center justify-center">
-                                                    {isRight && <div className="w-20 h-0.5 bg-border -ml-2 order-first" />}
+                                                    {isRight && <div className="w-20 h-0.5 bg-border order-first" />}
                                                     <div className="flex items-center justify-center bg-secondary text-secondary-foreground border-2 border-border font-bold text-2xl h-20 w-40 transition-all duration-300 hover:scale-105">
                                                         {age}
                                                     </div>
-                                                    {isLeft && <div className="w-20 h-0.5 bg-border -mr-2 order-last" />}
+                                                    {isLeft && <div className="w-20 h-0.5 bg-border order-last" />}
                                                 </div>
                                             </CollapsibleTrigger>
                                        </div>
@@ -136,7 +131,10 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                                     
                                     <CollapsibleContent>
                                         <div className="flex w-full justify-center pt-4">
-                                            <div className="relative p-6 bg-card rounded-lg border w-[320px] max-h-96 overflow-y-auto">
+                                            <div className={cn("relative p-6 bg-card rounded-lg border w-[320px] max-h-96 overflow-y-auto", {
+                                                'ml-[calc(50%+10rem)]': isLeft,
+                                                'mr-[calc(50%+10rem)]': isRight,
+                                            })}>
                                                 <h3 className="text-lg font-semibold mb-4">Events at Age {age}</h3>
                                                 {ageEvents.map((event) => (
                                                     <TimelineItem key={event.id} event={event} />
@@ -161,4 +159,3 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
     </div>
   );
 }
-
