@@ -2,20 +2,19 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { Syringe, Pill, Stethoscope, HeartPulse, Biohazard, HelpCircle } from 'lucide-react';
+import { Calendar, HelpCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { Badge } from './ui/badge';
 import { AddEventForm } from './add-event-form';
-import { TimelineEvent, EventType, eventIcons } from './health-sync-app';
+import { TimelineEvent, eventIcons } from './health-sync-app';
 
 
-const TimelineItem = ({ event, isLast }: { event: TimelineEvent; isLast: boolean }) => {
+const TimelineItem = ({ event }: { event: TimelineEvent; }) => {
   const Icon = eventIcons[event.type] || HelpCircle;
   return (
     <div className="relative pl-12 py-3 group animate-in fade-in-50 duration-500">
-      {!isLast && <div className="absolute left-5 top-0 h-full w-0.5 bg-border -translate-x-1/2" />}
+      <div className="absolute left-5 top-0 h-full w-0.5 bg-border -translate-x-1/2" />
       
       <div className="absolute left-5 top-4 -translate-x-1/2 -translate-y-1/2">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-primary border-2 border-primary/30 transition-transform duration-300 group-hover:scale-110">
@@ -81,34 +80,39 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
             </div>
             
             {sortedAges.length > 0 ? (
-                <Card className="overflow-hidden">
-                    <CardContent className="p-0">
-                        <Accordion type="single" collapsible className="w-full" defaultValue={`age-${sortedAges[0]}`}>
+                <Card>
+                    <CardContent className="p-6">
+                        <div className="relative">
+                            {/* This is the main timeline bar */}
+                            <div className="absolute left-5 top-0 h-full w-0.5 bg-border -translate-x-1/2" />
+
                             {sortedAges.map(age => {
                                 const ageEvents = eventsByAge[age];
                                 if (!ageEvents || ageEvents.length === 0) {
                                     return null;
                                 }
-                                const eventSummary = ageEvents.map(e => e.type).slice(0, 3).join(', ') + (ageEvents.length > 3 ? '...' : '');
                                 return (
-                                    <AccordionItem value={`age-${age}`} key={age} className="px-6 border-b last:border-b-0">
-                                        <AccordionTrigger className="text-xl font-bold hover:no-underline py-6">
-                                            <div className="flex justify-between w-full items-center pr-4">
-                                                <span>Age {age}</span>
-                                                <span className="text-sm font-normal text-muted-foreground">{eventSummary}</span>
+                                   <div key={age} className="relative">
+                                        {/* Age Marker */}
+                                        <div className="relative pl-12 py-6">
+                                             <div className="absolute left-5 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-secondary-foreground border-2 border-border font-bold">
+                                                    {age}
+                                                </div>
                                             </div>
-                                        </AccordionTrigger>
-                                        <AccordionContent>
-                                            <div className="relative pt-2">
-                                                {ageEvents.map((event, index) => (
-                                                    <TimelineItem key={event.id} event={event} isLast={index === ageEvents.length - 1} />
-                                                ))}
+                                             <div className="ml-4">
+                                                <h3 className="font-bold text-xl text-foreground">Age {age}</h3>
                                             </div>
-                                        </AccordionContent>
-                                    </AccordionItem>
+                                        </div>
+
+                                        {/* Events for this age */}
+                                        {ageEvents.map((event) => (
+                                            <TimelineItem key={event.id} event={event} />
+                                        ))}
+                                   </div>
                                 )
                             })}
-                        </Accordion>
+                        </div>
                     </CardContent>
                 </Card>
             ) : (
