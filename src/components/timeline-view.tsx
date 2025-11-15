@@ -2,14 +2,13 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { Calendar, HelpCircle } from 'lucide-react';
+import { HelpCircle } from 'lucide-react';
 import { Button } from './ui/button';
-import { Card, CardContent } from './ui/card';
-import { Badge } from './ui/badge';
 import { AddEventForm } from './add-event-form';
-import { TimelineEvent, eventIcons } from './health-sync-app';
+import { type TimelineEvent, eventIcons } from './health-sync-app';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
+import { Badge } from './ui/badge';
 
 const TimelineItem = ({ event }: { event: TimelineEvent; }) => {
   const Icon = eventIcons[event.type] || HelpCircle;
@@ -93,17 +92,19 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
             
             {sortedAges.length > 0 ? (
                 <div className="relative">
-                    {/* Central Timeline Line */}
                     <div className="absolute left-1/2 top-0 h-full w-0.5 bg-border -translate-x-1/2" />
-
                     {sortedAges.map((age, index) => {
                         const ageEvents = eventsByAge[age];
                         if (!ageEvents || ageEvents.length === 0) return null;
                         
                         const isOpen = openAge === age;
                         
-                        const positionIndex = index % 3; // 0 for left, 1 for center, 2 for right
-                        
+                        const pattern = index % 4; // 0=left, 1=center, 2=right, 3=center
+                        let position: 'left' | 'center' | 'right';
+                        if (pattern === 0) position = 'left';
+                        else if (pattern === 2) position = 'right';
+                        else position = 'center';
+
                         const color = colors[index % colors.length];
 
                         return (
@@ -113,41 +114,40 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                                     onOpenChange={() => setOpenAge(isOpen ? null : age)}
                                     className="w-full"
                                 >
-                                     <div 
-                                        className={cn("absolute top-1/2 -translate-y-1/2 w-full",
-                                            positionIndex === 0 && "left-0",
-                                            positionIndex === 1 && "left-1/2 -translate-x-1/2",
-                                            positionIndex === 2 && "right-0",
-                                        )}
-                                    >
-                                        <div className={cn("relative w-auto flex items-center",
-                                            positionIndex === 0 && "justify-start pl-[calc(25%-80px)]",
-                                            positionIndex === 1 && "justify-center",
-                                            positionIndex === 2 && "justify-end pr-[calc(25%-80px)]",
+                                    <div className={cn("relative h-20 flex items-center",
+                                      position === 'left' && 'justify-start',
+                                      position === 'center' && 'justify-center',
+                                      position === 'right' && 'justify-end'
+                                    )}>
+                                        <div className={cn("relative flex items-center",
+                                          position === 'left' && 'w-1/2 justify-end pr-8',
+                                          position === 'center' && 'w-auto',
+                                          position === 'right' && 'w-1/2 justify-start pl-8'
                                         )}>
                                             <CollapsibleTrigger asChild className="group w-auto">
                                                 <div className="flex items-center justify-center">
-                                                    {positionIndex === 2 && <div className="w-20 h-0.5 bg-border" />}
-                                                    <div className={cn("flex items-center justify-center border-2 font-bold text-2xl h-20 w-40 transition-all duration-300 hover:scale-105", color.bg, color.border, color.text)}>
+                                                    {position === 'right' && <div className="w-20 h-0.5 bg-border" />}
+                                                    <div className={cn("flex items-center justify-center border-2 font-bold text-2xl h-20 w-48 transition-all duration-300 hover:scale-105", color.bg, color.border, color.text)}>
                                                         {age}
                                                     </div>
-                                                    {positionIndex === 0 && <div className="w-20 h-0.5 bg-border" />}
+                                                    {position === 'left' && <div className="w-20 h-0.5 bg-border" />}
                                                 </div>
                                             </CollapsibleTrigger>
                                         </div>
                                     </div>
                                     
-                                    <CollapsibleContent className="pt-24">
-                                        <div className={cn("relative p-6 bg-card rounded-lg border w-[320px] max-h-96 overflow-y-auto mx-auto",
-                                         {
-                                            'ml-[calc(25%-160px)]': positionIndex === 0,
-                                            'mr-[calc(25%-160px)]': positionIndex === 2,
-                                        }
+                                    <CollapsibleContent>
+                                        <div className={cn("relative pt-4",
+                                          position === 'left' && 'pl-[calc(25%-160px)]',
+                                          position === 'center' && '',
+                                          position === 'right' && 'pr-[calc(25%-160px)] flex justify-end',
                                         )}>
-                                            <h3 className="text-lg font-semibold mb-4">Events at Age {age}</h3>
-                                            {ageEvents.map((event) => (
-                                                <TimelineItem key={event.id} event={event} />
-                                            ))}
+                                            <div className="relative p-6 bg-card rounded-lg border w-[320px] max-h-96 overflow-y-auto">
+                                                <h3 className="text-lg font-semibold mb-4">Events at Age {age}</h3>
+                                                {ageEvents.map((event) => (
+                                                    <TimelineItem key={event.id} event={event} />
+                                                ))}
+                                            </div>
                                         </div>
                                     </CollapsibleContent>
                                 </Collapsible>
