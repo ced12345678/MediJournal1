@@ -95,32 +95,40 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                         
                         const isOpen = openAge === age;
                         
-                        const patternIndex = index % 7;
-                        const isLeft = patternIndex >= 3 && patternIndex <= 4;
+                        const positionIndex = index % 3;
+                        const isLeft = positionIndex === 0;
+                        const isCenter = positionIndex === 1;
+                        const isRight = positionIndex === 2;
+
+                        let justifyContent = 'justify-center';
+                        if (isLeft) justifyContent = 'justify-start';
+                        if (isRight) justifyContent = 'justify-end';
+                        
 
                         return (
-                           <div key={age} className={cn(
-                                "relative flex py-8 w-full",
-                                isLeft ? 'justify-start' : 'justify-end'
-                           )}>
+                           <div key={age} className={cn("relative flex py-8 w-full", justifyContent)}>
                                 <Collapsible 
                                     open={isOpen}
                                     onOpenChange={() => setOpenAge(isOpen ? null : age)}
-                                    className="w-[calc(50%-2rem)]"
+                                    className={cn(
+                                        isCenter ? "w-4/5" : "w-[calc(50%-2rem)]"
+                                    )}
                                 >
                                     <CollapsibleTrigger asChild className="group w-full">
-                                         <div className="flex items-center w-full">
+                                         <div className={cn("flex items-center w-full", isCenter && 'justify-center')}>
+                                            {/* Connector line - only for left and right */}
+                                            {!isCenter && (
+                                                <div className={cn(
+                                                    "w-8 h-0.5 bg-border",
+                                                    isLeft ? 'order-last' : ''
+                                                )}></div>
+                                            )}
                                             <div className={cn(
-                                                "flex items-center justify-center bg-secondary text-secondary-foreground border-2 border-border font-bold text-2xl transition-transform duration-300 group-hover:scale-105 w-full h-20",
-                                                isLeft ? "ml-auto" : "mr-auto"
+                                                "flex items-center justify-center bg-secondary text-secondary-foreground border-2 border-border font-bold text-2xl transition-transform duration-300 group-hover:scale-105",
+                                                 "w-[500%] h-[200%]"
                                             )}>
                                                 {age}
                                             </div>
-                                            {/* Connector line from central bar to age box */}
-                                            <div className={cn(
-                                                "w-8 h-0.5 bg-border",
-                                                isLeft ? 'order-first' : ''
-                                            )}></div>
                                         </div>
                                     </CollapsibleTrigger>
                                     
