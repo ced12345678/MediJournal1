@@ -100,30 +100,37 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                         const isCenter = positionIndex === 1;
                         const isRight = positionIndex === 2;
 
-                        let justifyContent = 'justify-center';
-                        if (isLeft) justifyContent = 'justify-start';
-                        if (isRight) justifyContent = 'justify-end';
-                        
+                        const positionClasses: { [key: string]: string } = {
+                            left: 'left-1/4 -translate-x-1/2',
+                            center: 'left-1/2 -translate-x-1/2',
+                            right: 'left-3/4 -translate-x-1/2',
+                        };
 
+                        let currentPosition: 'left' | 'center' | 'right' = 'center';
+                        if (isLeft) currentPosition = 'left';
+                        if (isCenter) currentPosition = 'center';
+                        if (isRight) currentPosition = 'right';
+                        
                         return (
-                           <div key={age} className={cn("relative flex py-8 w-full", justifyContent)}>
+                           <div key={age} className="relative w-full h-48">
                                 <Collapsible 
                                     open={isOpen}
                                     onOpenChange={() => setOpenAge(isOpen ? null : age)}
-                                    className="w-[calc(50%-2rem)]"
+                                    className={cn(
+                                        "absolute top-1/2 -translate-y-1/2 w-56",
+                                        positionClasses[currentPosition]
+                                    )}
                                 >
                                     <CollapsibleTrigger asChild className="group w-full">
-                                         <div className={cn("flex items-center w-full", isCenter && 'justify-center')}>
+                                         <div className="flex items-center justify-center w-full">
                                             {/* Connector line - only for left and right */}
                                             {!isCenter && (
                                                 <div className={cn(
                                                     "w-8 h-0.5 bg-border",
-                                                    isLeft ? 'order-last' : ''
+                                                    isLeft ? 'order-last -mr-2' : 'order-first -ml-2'
                                                 )}></div>
                                             )}
-                                            <div className={cn(
-                                                "flex items-center justify-center bg-secondary text-secondary-foreground border-2 border-border rounded-lg font-bold text-2xl w-28 h-20 transition-transform duration-300 group-hover:scale-105"
-                                            )}>
+                                            <div className="flex items-center justify-center bg-secondary text-secondary-foreground border-2 border-border rounded-lg font-bold text-2xl h-20 flex-grow transition-transform duration-300 group-hover:scale-105">
                                                 {age}
                                             </div>
                                         </div>
@@ -131,7 +138,7 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                                     
                                     <CollapsibleContent>
                                         <div className="pt-4">
-                                            <div className="relative p-6 bg-card rounded-lg border">
+                                            <div className="relative p-6 bg-card rounded-lg border w-[320px] max-h-96 overflow-y-auto">
                                                 <h3 className="text-lg font-semibold mb-4">Events at Age {age}</h3>
                                                 {ageEvents.map((event) => (
                                                     <TimelineItem key={event.id} event={event} />
