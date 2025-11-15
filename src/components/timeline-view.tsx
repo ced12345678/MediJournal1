@@ -1,14 +1,15 @@
 
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Calendar, HelpCircle } from 'lucide-react';
 import { Button } from './ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { AddEventForm } from './add-event-form';
 import { TimelineEvent, eventIcons } from './health-sync-app';
-
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { cn } from '@/lib/utils';
 
 const TimelineItem = ({ event }: { event: TimelineEvent; }) => {
   const Icon = eventIcons[event.type] || HelpCircle;
@@ -49,15 +50,17 @@ const TimelineItem = ({ event }: { event: TimelineEvent; }) => {
 
 export default function TimelineView({ events, onAddEvent }: { events: TimelineEvent[], onAddEvent: (event: Omit<TimelineEvent, 'id'> | Omit<TimelineEvent, 'id'>[]) => void }) {
   
+  const [openAge, setOpenAge] = useState<number | null>(null);
+
   const eventsByAge = useMemo(() => {
     const grouped: { [age: number]: TimelineEvent[] } = {};
     events.forEach(event => {
-      if (!grouped[event.age]) {
-        grouped[event.age] = [];
+      const age = event.age;
+      if (!grouped[age]) {
+        grouped[age] = [];
       }
-      grouped[event.age].push(event);
+      grouped[age].push(event);
     });
-    // Sort events within each age group chronologically
     for (const age in grouped) {
       grouped[age].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     }
@@ -83,30 +86,39 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                 <Card>
                     <CardContent className="p-6">
                         <div className="relative">
-                            {/* This is the main timeline bar */}
                             <div className="absolute left-5 top-0 h-full w-0.5 bg-border -translate-x-1/2" />
 
                             {sortedAges.map(age => {
                                 const ageEvents = eventsByAge[age];
-                                if (!ageEvents || ageEvents.length === 0) {
-                                    return null;
-                                }
-                                return (
-                                   <div key={age} className="relative">
-                                        {/* Age Marker */}
-                                        <div className="relative pl-12 py-6">
-                                             <div className="absolute left-5 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                                                <div className="flex h-10 w-10 items-center justify-center bg-secondary text-secondary-foreground border-2 border-border font-bold transition-transform duration-300 hover:scale-110">
-                                                    {age}
-                                                </div>
-                                            </div>
-                                        </div>
+                                if (!ageEvents || ageEvents.length === 0) return null;
+                                
+                                const isOpen = openAge === age;
 
-                                        {/* Events for this age */}
-                                        {ageEvents.map((event) => (
-                                            <TimelineItem key={event.id} event={event} />
-                                        ))}
-                                   </div>
+                                return (
+                                   <Collapsible 
+                                        key={age} 
+                                        open={isOpen}
+                                        onOpenChange={() => setOpenAge(isOpen ? null : age)}
+                                        className="relative"
+                                    >
+                                        <div className="relative pl-12 py-6">
+                                            <CollapsibleTrigger asChild>
+                                                <div className="absolute left-5 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer">
+                                                    <div className="flex h-10 w-10 items-center justify-center bg-secondary text-secondary-foreground border-2 border-border font-bold transition-transform duration-300 hover:scale-110">
+                                                        {age}
+                                                    </div>
+                                                </div>
+                                            </CollapsibleTrigger>
+                                        </div>
+                                        
+                                        <CollapsibleContent>
+                                            <div className="pb-4">
+                                                {ageEvents.map((event) => (
+                                                    <TimelineItem key={event.id} event={event} />
+                                                ))}
+                                            </div>
+                                        </CollapsibleContent>
+                                   </Collapsible>
                                 )
                             })}
                         </div>
