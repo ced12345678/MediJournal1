@@ -116,40 +116,29 @@ export default function TimelineView({ events, onAddEvent }: { events: TimelineE
                                 onOpenChange={() => setOpenAge(isOpen ? null : age)}
                                 className="relative my-8"
                            >
-                                <div className={cn("absolute w-full h-20 top-0 flex",
-                                    position === 'left' && 'justify-start',
-                                    position === 'center' && 'justify-center',
-                                    position === 'right' && 'justify-end'
+                            <div className="absolute w-full h-20 top-0">
+                                <div className={cn("absolute h-full w-1/2",
+                                    position === 'left' && 'left-0',
+                                    position === 'center' && 'left-1/4',
+                                    position === 'right' && 'left-1/2'
                                 )}>
-                                    <div className={cn("flex w-1/2", 
-                                        position === 'left' && 'justify-end',
-                                        position === 'center' && 'justify-center',
-                                        position === 'right' && 'justify-start'
-                                    )}>
-                                        <CollapsibleTrigger asChild className="group">
-                                            <div className="flex items-center">
-                                                {position === 'left' && <div className={cn("flex items-center justify-end")}>
-                                                    <div className={cn("flex items-center justify-center font-bold text-2xl h-20 w-48 transition-all duration-300 hover:scale-105 border-4", color.bg, color.border)}>
-                                                        {age}
-                                                    </div>
-                                                    <div className="h-0.5 bg-border w-10"></div>
-                                                </div>}
-                                                {position === 'center' && <div className={cn("flex items-center justify-center font-bold text-2xl h-20 w-48 transition-all duration-300 hover:scale-105 border-4", color.bg, color.border)}>
+                                    <CollapsibleTrigger asChild className="group">
+                                        <div className={cn("w-full h-full flex items-center",
+                                            position === 'left' && 'justify-end',
+                                            position === 'center' && 'justify-center',
+                                            position === 'right' && 'justify-start'
+                                        )}>
+                                                {position === 'left' && <div className="h-0.5 bg-border w-10"></div>}
+                                                <div className={cn("flex items-center justify-center font-bold text-2xl h-20 w-48 transition-all duration-300 hover:scale-105 border-4", color.bg, color.border)}>
                                                     {age}
-                                                </div>}
-                                                {position === 'right' && <div className={cn("flex items-center justify-start")}>
-                                                     <div className="h-0.5 bg-border w-10"></div>
-                                                    <div className={cn("flex items-center justify-center font-bold text-2xl h-20 w-48 transition-all duration-300 hover:scale-105 border-4", color.bg, color.border)}>
-                                                        {age}
-                                                    </div>
-                                                </div>}
-                                            </div>
-                                        </CollapsibleTrigger>
-                                    </div>
+                                                </div>
+                                                {position === 'right' && <div className="h-0.5 bg-border w-10"></div>}
+                                        </div>
+                                    </CollapsibleTrigger>
                                 </div>
-
+                            </div>
                                 <CollapsibleContent className="pt-20">
-                                     <div className={cn("w-full h-auto flex",
+                                     <div className={cn("w-full flex",
                                         position === 'left' && 'justify-start',
                                         position === 'center' && 'justify-center',
                                         position === 'right' && 'justify-end'
