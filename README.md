@@ -30,14 +30,29 @@ In a real-world application, this model would evolve to use a secure, HIPAA-comp
 
 This "zero-knowledge" architecture means that even we, the creators of MediJournal, could not access or read our users' sensitive health information. This approach ensures absolute privacy and security at scale.
 
-## Business Model: A Freemium Approach
+## Business Model: A Freemium Approach to Building Trust and Revenue
 
-Our monetization strategy is designed to build trust and align with our privacy-first philosophy. We will **never sell user data or rely on advertising**.
+Our monetization strategy is designed to build trust and align with our privacy-first philosophy. We will **never sell user data or rely on advertising**. Instead, we will use a freemium model.
 
-- **Free Tier (MediJournal Core):** Provides essential features for free to all users, including unlimited manual timeline entries, secure cloud storage, and standard PDF exports. The goal is to provide immediate value and build a large, loyal user base.
+### Market Opportunity & Research
 
-- **Premium Tier (MediJournal Plus):** A subscription-based service offering advanced features for users who want to unlock the full power of their health data. Key features would include:
-    - **Advanced AI Insights:** Proactive analysis of a user's timeline to find trends, potential drug interactions, and generate personalized questions for doctors.
-    - **Automated Data Sync:** Integration with wearables (Apple Watch, Fitbit) and patient portals to automatically import health data.
-    - **Customizable Reporting:** Filterable reports for specific needs (e.g., a 5-year cardiology history).
-    - **Family Accounts:** Manage records for dependents under a single subscription.
+*   **Target Market:** Our primary market is the **6 in 10 U.S. adults with chronic conditions** and the **53 million unpaid caregivers** who manage their health. These users have a critical need for organized, shareable health records.
+*   **Market Gap:** While competitors like Apple Health or MyChart exist, they are either tied to a specific ecosystem or healthcare provider. MediJournal's key differentiator is its **privacy-first, "zero-knowledge" architecture** and its unique, intuitive lifetime timeline view.
+*   **Market Trend:** The digital health market is projected to exceed $660B by 2026. Patients are demanding more control over their data, creating the perfect entry point for a privacy-focused solution like MediJournal.
+
+### Tier 1: MediJournal Core (Free)
+
+The free tier is our user acquisition engine, designed to provide immense value and build a foundation of trust.
+
+*   **Features:** Unlimited manual timeline entries, secure cloud storage for data sync across devices, and standard PDF health exports.
+*   **Goal:** Attract a large user base and establish MediJournal as the most trusted tool for personal health management.
+
+### Tier 2: MediJournal Plus (Premium Subscription)
+
+This is our primary revenue driver, offered at a competitive subscription fee (e.g., $7.99/month). The premium tier is for users who want to move from simply *recording* data to actively *understanding* and *optimizing* their health.
+
+*   **Premium Features:**
+    *   **Advanced AI Insights:** Proactive analysis of a user's timeline to find trends, potential drug interactions, and generate personalized questions for doctors.
+    *   **Automated Data Sync:** Integration with wearables (Apple Watch, Fitbit) and patient portals to automatically import health data.
+    *   **Customizable Reporting:** Filterable reports for specific needs (e.g., a 5-year cardiology history).
+    *   **Family Accounts:** Manage records for dependents under a single subscription.
